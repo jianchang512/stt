@@ -19,11 +19,9 @@
 
 # 视频演示
 
-https://github.com/jianchang512/vocal-separate/assets/3378335/8e6b1b20-70d4-45e3-b106-268888fc0240
 
+![image](https://github.com/jianchang512/sts/assets/3378335/0f724ff1-21b3-4960-b6ba-5aa994ea414c)
 
-
-![image](./images/1.png)
 
 
 
