@@ -55,7 +55,7 @@ https://github.com/jianchang512/sts/assets/3378335/d716acb6-c20c-4174-9620-f574a
 
 3. 激活环境，win下命令 `%cd%/venv/scripts/activate`，linux和Mac下命令 `source ./venv/bin/activate`
 
-4. 安装依赖: `pip install -r requirements.txt`
+4. 安装依赖: `pip install -r requirements.txt`,如果报版本冲突错误，请执行 `pip install -r requirements.txt --no-deps`
 
 5. win下解压 ffmpeg.7z，将其中的`ffmpeg.exe`和`ffprobe.exe`放在项目目录下, linux和mac 到 [ffmpeg官网](https://ffmpeg.org/download.html)下载对应版本ffmpeg，解压其中的`ffmpeg`和`ffprobe`二进制程序放到项目根目录下
 
