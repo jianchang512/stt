@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title data-cn="语音识别转文字" data-en="Speech Recognition"></title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="/static/layui/css/layui.css" rel="stylesheet">
+    <style>
+        .flex {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .flex-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .my-1 {
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        .p-2 {
+            padding: 15px;
+        }
+
+        .text-center {
+            text-align: center
+        }
+
+        .name {
+            margin-right: 8px;
+        }
+
+        #upload {
+            display: block;
+            margin-bottom: 10px;
+            box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
+            padding: 50px 30px;
+        }
+
+        .layui-form {
+            margin: 15px auto;
+        }
+
+        .result-list {
+            margin-top: 8px;
+            margin-bottom: 8px;
+            padding: 5px;
+            border-bottom: 1px solid #f1f1f1;
+        }
+
+        .result-list .name {
+            width: 150px;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            text-align: left;
+        }
+
+        #content {
+            width: 80%;
+            min-width: 800px;
+            max-width: 1400px;
+            margin: 75px auto 50px;
+        }
+
+        .worktype {
+            color: #999;
+            font-size: 12px
+        }
+    </style>
+</head>
+<body>
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header" style="background: #16b777">
+        <div class="layui-logo layui-hide-xs" style="color: #fff" data-en="Speech Recognition" data-cn="语音识别"></div>
+        <!-- 头部区域（可配合layui 已有的水平导航） -->
+        <ul class="layui-nav layui-layout-right">
+            <!-- 移动端显示 -->
+            <li id="checkupdate" class="layui-nav-item layui-hide "><a
+                    href="https://github.com/jianchang512/sts/releases" class="layui-font-red"
+                    target="_blank"></a>
+            </li>
+            <li class="layui-nav-item layui-hide-xs"><a href="https://github.com/jianchang512/sts"
+                                                        target="_blank">Github</a></li>
+            <li class="layui-nav-item layui-hide-xs"><a href="https://github.com/jianchang512/sts/issue"
+                                                        target="_blank" data-en="Post Isue" data-cn="遇到问题?"></a></li>
+            <li class="layui-nav-item layui-hide-xs"><a href="https://discord.gg/TMCM2PfHzQ" target="_blank">Discord</a>
+
+            </li>
+            <li class="layui-nav-item layui-hide-xs"><a href="https://github.com/jianchang512/sts/releases/tag/0.0" target="_blank" data-cn="下载模型" data-en="Download models"></a>
+            </li>
+        </ul>
+    </div>
+    <div id="content">
+        <!-- 内容主体区域 -->
+        <div class="layui-upload-drag layui-border-red" id="upload">
+            <i class="layui-icon layui-icon-upload"></i>
+            <div data-cn="点击上传，或将音频视频文件拖拽到此处(wav,mp3,flac,mp4,mov,mkv,avi,mpeg)"
+                 data-en="click to upload or drag video or audio to here(wav,mp3,flac,mp4,mov,mkv,avi,mpeg)"></div>
+            <div class="layui-hide my-1" id="preview"></div>
+        </div>
+        <form class="layui-form text-center">
+            <div class="layui-form-item layui-inline">
+                <label class="layui-form-label" style="width: auto" data-cn="选择发音语言" data-en="Choose Pronunciation Language"></label>
+                <div class="layui-input-inline">
+                    <select name="language">
+                        {% for name,val in lang_code.items() %}
+                            <option value="{{ val[0] }}">{{ name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item layui-inline">
+                <label class="layui-form-label" style="width: auto" data-cn="返回文字格式" data-en="Return to text format"></label>
+                <div class="layui-input-inline">
+                    <select name="data_type">
+                        <option value="srt" data-cn="srt字幕格式" data-en="Subtitles srt files"></option>
+                        <option value="srt" >json</option>
+                        <option value="srt" data-cn="纯文字" data-en="text"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item layui-inline">
+                <label class="layui-form-label" style="width: auto" data-cn="选择要使用的模型" data-en="Select model"></label>
+                <div class="layui-input-inline">
+                    <select name="model">
+                        <option value="base">base</option>
+                        <option value="base">small</option>
+                        <option value="base">medium</option>
+                        <option value="base">large</option>
+                        <option value="base">large-v3</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="layui-form-item layui-inline">
+                <input type="hidden" id="wav_name" name="wav_name">
+                <button type="submit" class="layui-btn layui-btn-danger" lay-submit lay-filter="submit" data-cn="立即识别"
+                        data-en="Start Separate"></button>
+                {% if cuda %}
+                    <span class="worktype">on CUDA</span>
+                {% else %}
+                    <span class="worktype">on CPU </span>
+                {% endif %}
+            </div>
+            <div class="layui-label-text layui-font-12 my-1 layui-font-gray"
+                 data-en="The recognition of base to large-v3 models is becoming increasingly accurate, but it also consumes more resources. If you do not have the CUDA acceleration environment, do not choose large series models"
+                 data-cn="base到large-v3模型识别越来越精确，但也更消耗资源，如果不具备CUDA加速环境，请勿选用large系模型"></div>
+
+        </form>
+
+        <div class="layui-card ">
+            <div class="layui-card-body">
+                <textarea placeholder-cn="识别结果在此显示" placeholder-en="Result list in here" class="layui-textarea" id="result" readonly cols="30" rows="10"></textarea>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/static/layui/layui.js"></script>
+<script>
+    let language = '{{ language }}';
+    window.$ = layui.$;
+    if (language === 'zh') {
+        $("[data-cn]").each(function () {
+            $(this).html($(this).attr('data-cn'));
+
+        });
+        $("[placeholder-cn]").each(function () {
+            $(this).attr('placeholder',$(this).attr('placeholder-cn'));
+        });
+    } else {
+        $("[data-en]").each(function () {
+            $(this).html($(this).attr('data-en'));
+        });
+        $("[placeholder-en]").each(function () {
+            $(this).attr('placeholder',$(this).attr('placeholder-en'));
+        });
+    }
+    //JS
+    layui.use(function () {
+        var layer = layui.layer;
+
+        var upload = layui.upload;
+        let form = layui.form;
+        // 渲染
+        let layindex1 = null;
+        upload.render({
+            elem: '#upload',
+            field: "audio",
+            accept: "file",
+            exts: 'mp4|mp3|flac|wav|avi|mkv|mpeg|mov',
+            url: '/upload', // 实际使用时改成您自己的上传接口即可。
+            choose: function () {
+                layindex1 = layer.load();
+            },
+            done: function (res) {
+                $('#preview').removeClass('layui-hide').html(`
+                    <hr><div class="flex">
+                        <span class="name">${res.msg} ${res.data}</span>
+                        <audio src="/static/tmp/${res.data}" controls></audio>
+                    </div>
+                `);
+                $('#wav_name').val(res.data);
+                console.log(res);
+                layer.close(layindex1);
+            },
+            error: function () {
+                layer.close(layindex1);
+            }
+        });
+        // 提交事件
+        form.on('submit(submit)', function (data) {
+            var field = data.field; // 获取表单全部字段值
+            if (!field['wav_name']) {
+                layer.alert(language === 'zh' ? '必须先上传要识别的音频或视频文件!' : 'The file to be recognition must be uploaded first!', {title: false})
+                return false;
+            }
+            // 显示填写结果，仅作演示用
+            layindex1 = layer.load();
+            // 此处可执行 Ajax 等操作
+            $.post('/process', field, function (res) {
+                layer.close(layindex1)
+                if (res.code !== 0) {
+                    return layer.alert(res.msg, {title: false})
+                }
+                $("#result").val(field['data_type'] === 'json' ? JSON.stringify(res.data) : res.data);
+                $("#result").removeAttr('readonly');
+            });
+            return false; // 阻止默认 form 跳转
+        });
+        setTimeout(() => {
+            $.get('/checkupdate', function (res) {
+                if (res.code === 0 && res.msg) {
+                    $('#checkupdate').removeClass('layui-hide');
+                    $('#checkupdate a').text(res.msg);
+                }
+            });
+        }, 60000);
+
+    });
+</script>
+</body>
+</html>
