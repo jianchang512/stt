@@ -13,28 +13,28 @@
 >
 > openai-whisper 开源模型有 base/small/medium/large/large-v3, 内置base模型，base->large-v3识别效果越来越好，但所需计算机资源也更多，根据需要可自行下载后放到 models 目录下即可。
 >
-> [全部模型下载地址](https://github.com/jianchang512/sts/releases/tag/0.0)
+> [全部模型下载地址](https://github.com/jianchang512/stt/releases/tag/0.0)
 >
 
 
 # 视频演示
 
 
-https://github.com/jianchang512/sts/assets/3378335/d716acb6-c20c-4174-9620-f574a7ff095d
+https://github.com/jianchang512/stt/assets/3378335/d716acb6-c20c-4174-9620-f574a7ff095d
 
 
 
 
-![image](https://github.com/jianchang512/sts/assets/3378335/0f724ff1-21b3-4960-b6ba-5aa994ea414c)
+![image](https://github.com/jianchang512/stt/assets/3378335/0f724ff1-21b3-4960-b6ba-5aa994ea414c)
 
 
 
 
 # 预编译Win版使用方法/Linux和Mac源码部署
 
-1. [点击此处打开Releases页面下载](https://github.com/jianchang512/sts/releases)预编译文件
+1. [点击此处打开Releases页面下载](https://github.com/jianchang512/stt/releases)预编译文件
 
-2. 下载后解压到某处，比如 E:/sts
+2. 下载后解压到某处，比如 E:/stt
 
 3. 双击 start.exe ，等待自动打开浏览器窗口即可
 
@@ -47,9 +47,9 @@ https://github.com/jianchang512/sts/assets/3378335/d716acb6-c20c-4174-9620-f574a
 
 0. 要求 python 3.9->3.11
 
-1. 创建空目录，比如 E:/sts, 在这个目录下打开 cmd 窗口，方法是地址栏中输入 `cmd`, 然后回车。
+1. 创建空目录，比如 E:/stt, 在这个目录下打开 cmd 窗口，方法是地址栏中输入 `cmd`, 然后回车。
 
-	使用git拉取源码到当前目录 ` git clone git@github.com:jianchang512/sts.git . `
+	使用git拉取源码到当前目录 ` git clone git@github.com:jianchang512/stt.git . `
 
 2. 创建虚拟环境 `python -m venv venv`
 
@@ -59,7 +59,7 @@ https://github.com/jianchang512/sts/assets/3378335/d716acb6-c20c-4174-9620-f574a
 
 5. win下解压 ffmpeg.7z，将其中的`ffmpeg.exe`和`ffprobe.exe`放在项目目录下, linux和mac 到 [ffmpeg官网](https://ffmpeg.org/download.html)下载对应版本ffmpeg，解压其中的`ffmpeg`和`ffprobe`二进制程序放到项目根目录下
 
-6. [下载模型压缩包](https://github.com/jianchang512/sts/releases/tag/0.0)，根据需要下载模型，下载后将压缩包里的 xx.pt 文件放到项目根目录的 models 文件夹内
+6. [下载模型压缩包](https://github.com/jianchang512/stt/releases/tag/0.0)，根据需要下载模型，下载后将压缩包里的 xx.pt 文件放到项目根目录的 models 文件夹内
 
 7. 执行  `python  start.py `，等待自动打开本地浏览器窗口。
 
