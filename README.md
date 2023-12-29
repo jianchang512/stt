@@ -139,6 +139,14 @@ Api 请求示例
 0. 如果没有英伟达显卡或未配置好CUDA环境，不要使用 large/large-v3 模型，可能导致内存耗尽死机
 1. 中文在某些情况下会输出繁体字
 
+# 相关联项目
+
+[视频翻译配音工具:翻译字幕并配音](https://github.com/jianchang512/pyvideotrans)
+
+[声音克隆工具:用任意音色合成语音](https://github.com/jianchang512/clone-voice)
+
+[人声背景乐分离:极简的人声和背景音乐分离工具，本地化网页操作](https://github.com/jianchang512/stt)
+
 # 致谢
 
 本项目主要依赖的其他项目
