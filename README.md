@@ -23,8 +23,6 @@
 https://github.com/jianchang512/stt/assets/3378335/d716acb6-c20c-4174-9620-f574a7ff095d
 
 
-
-
 ![image](https://github.com/jianchang512/stt/assets/3378335/0f724ff1-21b3-4960-b6ba-5aa994ea414c)
 
 
@@ -62,6 +60,62 @@ https://github.com/jianchang512/stt/assets/3378335/d716acb6-c20c-4174-9620-f574a
 6. [下载模型压缩包](https://github.com/jianchang512/stt/releases/tag/0.0)，根据需要下载模型，下载后将压缩包里的 xx.pt 文件放到项目根目录的 models 文件夹内
 
 7. 执行  `python  start.py `，等待自动打开本地浏览器窗口。
+
+
+
+# api接口
+
+接口地址: http://127.0.0.1:9977/api
+
+请求方法: POST
+
+请求参数:
+
+    language: 语言代码:可选如下
+
+    >
+    > 中文：zh
+    > 英语：en
+    > 法语：fr
+    > 德语：de
+    > 日语：ja
+    > 韩语：ko
+    > 俄语：ru
+    > 西班牙语：es
+    > 泰国语：th
+    > 意大利语：it
+    > 葡萄牙语：pt
+    > 越南语：vi
+    > 阿拉伯语：ar
+    > 土耳其语：tr
+    >
+
+    model: 模型名称，可选如下
+    >
+    > base 对应于 models/base.pt
+    > small 对应于 models/small.pt
+    > medium 对应于 models/medium.pt
+    > large 对应于 models/large.pt
+    > large-v3 对应于 models/large-v3.pt
+    >
+
+    response_format: 返回的字幕格式，可选 text|json|srt
+
+    file: 音视频文件，二进制上传
+
+Api 请求示例
+
+```python
+    import requests
+    # 请求地址
+    url = "http://127.0.0.1:9977/api"
+    # 请求参数  file:音视频文件，language：语言代码，model：模型，response_format:text|json|srt
+    # 返回 code==0 成功，其他失败，msg==成功为ok，其他失败原因，data=识别后返回文字
+    files = {"file": open("C:\\Users\\c1\\Videos\\2.wav", "rb")}
+    data={"language":"zh","model":"base","response_format":"json"}
+    response = requests.request("POST", url, timeout=600, data=data,files=files)
+    print(response.json())
+```
 
 
 

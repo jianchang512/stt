@@ -147,6 +147,79 @@ def process():
         return jsonify({"code": 1, "msg": str(e)})
 
 
+
+@app.route('/api',methods=['GET','POST'])
+def api():
+    try:
+        # 获取上传的文件
+        audio_file = request.files['file']
+        model = request.form.get("model")
+        language = request.form.get("language")
+        response_format = request.form.get("response_format")
+        print(f'{model=},{language=},{response_format=}')
+        if not os.path.exists(os.path.join(cfg.MODEL_DIR, f'{model}.pt')):
+            return jsonify({"code": 1, "msg": f"{model} {cfg.transobj['lang4']}"})
+
+        # 如果是mp4
+        noextname, ext = os.path.splitext(audio_file.filename)
+        ext = ext.lower()
+        # 如果是视频，先分离
+        wav_file = os.path.join(cfg.TMP_DIR, f'{noextname}.wav')
+        print(f'{wav_file=}')
+        if not os.path.exists(wav_file) or os.path.getsize(wav_file) == 0:
+            msg = ""
+            if ext in ['.mp4', '.mov', '.avi', '.mkv', '.mpeg', '.mp3', '.flac']:
+                video_file = os.path.join(cfg.TMP_DIR, f'{noextname}{ext}')
+                audio_file.save(video_file)
+                params = [
+                    "-i",
+                    video_file,
+                ]
+                if ext not in ['.mp3', '.flac']:
+                    params.append('-vn')
+                params.append(wav_file)
+                rs = tool.runffmpeg(params)
+                if rs != 'ok':
+                    return jsonify({"code": 1, "msg": rs})
+                msg = "," + cfg.transobj['lang9']
+            elif ext == '.wav':
+                audio_file.save(wav_file)
+            else:
+                return jsonify({"code": 1, "msg": f"{cfg.transobj['lang3']} {ext}"})
+        print(f'{ext=}')
+        model = whisper.load_model(model, download_root=cfg.ROOT_DIR + "/models")
+        transcribe = model.transcribe(wav_file, language=language)
+        segments = transcribe['segments']
+        raw_subtitles = []
+        for (sidx, segment) in enumerate(segments):
+            segment['start'] = int(segment['start'] * 1000)
+            segment['end'] = int(segment['end'] * 1000)
+            startTime = tool.ms_to_time_string(ms=segment['start'])
+            endTime = tool.ms_to_time_string(ms=segment['end'])
+            text = segment['text'].strip().replace('&#39;', "'")
+            text = re.sub(r'&#\d+;', '', text)
+
+            # 无有效字符
+            if not text or re.match(r'^[，。、？‘’“”；：（｛｝【】）:;"\'\s \d`!@#$%^&*()_+=.,?/\\-]*$', text) or len(text) <= 1:
+                continue
+            if response_format == 'json':
+                # 原语言字幕
+                raw_subtitles.append(
+                    {"line": len(raw_subtitles) + 1, "start_time": startTime, "end_time": endTime, "text": text})
+            elif response_format == 'text':
+                raw_subtitles.append(text)
+            else:
+                raw_subtitles.append(f'{len(raw_subtitles) + 1}\n{startTime} --> {endTime}\n{text}\n')
+        if response_format != 'json':
+            raw_subtitles = "\n".join(raw_subtitles)
+        print(raw_subtitles)
+        return jsonify({"code": 0, "msg": 'ok', "data": raw_subtitles})
+    except Exception as e:
+        print(e)
+        app.logger.error(f'[api]error: {e}')
+        return jsonify({'code': 2, 'msg': cfg.transobj['lang2']})
+
+
 @app.route('/checkupdate', methods=['GET', 'POST'])
 def checkupdate():
     return jsonify({'code': 0, "msg": cfg.updatetips})

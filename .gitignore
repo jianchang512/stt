@@ -8,3 +8,4 @@ models/*.pt
 *.mp3
 *.spec
 *.exe
+*.zip
