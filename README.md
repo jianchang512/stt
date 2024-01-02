@@ -99,11 +99,10 @@ https://github.com/jianchang512/stt/assets/3378335/d716acb6-c20c-4174-9620-f574a
 
     model: 模型名称，可选如下
     >
-    > base 对应于 models/base.pt
-    > small 对应于 models/small.pt
-    > medium 对应于 models/medium.pt
-    > large 对应于 models/large.pt
-    > large-v3 对应于 models/large-v3.pt
+    > base 对应于 models/models--Systran--faster-whisper-base
+    > small 对应于 models/models--Systran--faster-whisper-small
+    > medium 对应于 models/models--Systran--faster-whisper-medium
+    > large-v3 对应于 models/models--Systran--faster-whisper-large-v3
     >
 
     response_format: 返回的字幕格式，可选 text|json|srt
