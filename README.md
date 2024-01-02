@@ -2,7 +2,7 @@
 
 # 语音识别转文字工具
 
-这是一个离线运行的本地语音识别转文字工具，基于 openai-whipser 开源模型，可将视频/音频中的人类声音识别并转为文字，可输出json格式、srt字幕带时间戳格式、纯文字格式。可用于自行部署后替代 openai 的语音识别接口或百度语音识别等，准确率基本等同openai官方api接口。
+这是一个离线运行的本地语音识别转文字工具，基于 fast-whipser 开源模型，可将视频/音频中的人类声音识别并转为文字，可输出json格式、srt字幕带时间戳格式、纯文字格式。可用于自行部署后替代 openai 的语音识别接口或百度语音识别等，准确率基本等同openai官方api接口。
 
 > 
 > 部署或下载后，双击 start.exe 自动调用本地浏览器打开本地网页。
@@ -11,7 +11,7 @@
 >
 > 全过程无需联网，完全本地运行，可部署于内网
 >
-> openai-whisper 开源模型有 base/small/medium/large/large-v3, 内置base模型，base->large-v3识别效果越来越好，但所需计算机资源也更多，根据需要可自行下载后放到 models 目录下即可。
+> fast-whisper 开源模型有 base/small/medium/large-v3, 内置base模型，base->large-v3识别效果越来越好，但所需计算机资源也更多，根据需要可自行下载后解压到 models 目录下即可。
 >
 > [全部模型下载地址](https://github.com/jianchang512/stt/releases/tag/0.0)
 >
@@ -57,7 +57,7 @@ https://github.com/jianchang512/stt/assets/3378335/d716acb6-c20c-4174-9620-f574a
 
 5. win下解压 ffmpeg.7z，将其中的`ffmpeg.exe`和`ffprobe.exe`放在项目目录下, linux和mac 到 [ffmpeg官网](https://ffmpeg.org/download.html)下载对应版本ffmpeg，解压其中的`ffmpeg`和`ffprobe`二进制程序放到项目根目录下
 
-6. [下载模型压缩包](https://github.com/jianchang512/stt/releases/tag/0.0)，根据需要下载模型，下载后将压缩包里的 xx.pt 文件放到项目根目录的 models 文件夹内
+6. [下载模型压缩包](https://github.com/jianchang512/stt/releases/tag/0.0)，根据需要下载模型，下载后将压缩包里的文件夹放到项目根目录的 models 文件夹内
 
 7. 执行  `python  start.py `，等待自动打开本地浏览器窗口。
 
@@ -121,7 +121,7 @@ Api 请求示例
 
 # CUDA 加速支持
 
-**安装CUDA工具**
+**安装CUDA工具** [详细安装方法](https://juejin.cn/post/7318704408727519270)
 
 如果你的电脑拥有 Nvidia 显卡，先升级显卡驱动到最新，然后去安装对应的 
    [CUDA Toolkit 11.8](https://developer.nvidia.com/cuda-downloads)  和  [cudnn for CUDA11.X](https://developer.nvidia.com/rdp/cudnn-archive)。

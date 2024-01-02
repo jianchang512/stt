@@ -2,15 +2,16 @@ import logging
 import re
 import threading
 import sys
-
-import whisper
+import torch
 from flask import Flask, request, render_template, jsonify, send_from_directory
 import os
 from gevent.pywsgi import WSGIServer, WSGIHandler, LoggingLogAdapter
 from logging.handlers import RotatingFileHandler
 from stslib import cfg, tool
 from stslib.cfg import ROOT_DIR
+from faster_whisper import WhisperModel
 
+device = "cuda" if torch.cuda.is_available() else "cpu"
 
 class CustomRequestHandler(WSGIHandler):
     def log_request(self):
@@ -112,20 +113,23 @@ def process():
     wav_file = os.path.join(cfg.TMP_DIR, wav_name)
     if not os.path.exists(wav_file):
         return jsonify({"code": 1, "msg": f"{wav_file} {cfg.langlist['lang5']}"})
-    if not os.path.exists(os.path.join(cfg.MODEL_DIR, f'{model}.pt')):
+    if not os.path.exists(os.path.join(cfg.MODEL_DIR, f'models--Systran--faster-whisper-{model}/snapshots/')):
         return jsonify({"code": 1, "msg": f"{model} {cfg.transobj['lang4']}"})
 
     try:
-        model = whisper.load_model(model, download_root=cfg.ROOT_DIR + "/models")
-        transcribe = model.transcribe(wav_file, language=language)
-        segments = transcribe['segments']
+        model = WhisperModel(model, device=device, compute_type="int8", download_root=cfg.ROOT_DIR + "/models")
+        #model = whisper.load_model(model, download_root=cfg.ROOT_DIR + "/models")
+        segments,_ = model.transcribe(wav_file, beam_size=5,  vad_filter=True,
+    vad_parameters=dict(min_silence_duration_ms=500),language=language)
+        #segments = transcribe
         raw_subtitles = []
-        for (sidx, segment) in enumerate(segments):
-            segment['start'] = int(segment['start'] * 1000)
-            segment['end'] = int(segment['end'] * 1000)
-            startTime = tool.ms_to_time_string(ms=segment['start'])
-            endTime = tool.ms_to_time_string(ms=segment['end'])
-            text = segment['text'].strip().replace('&#39;', "'")
+        #sidx=0
+        for segment in segments:
+            start = int(segment.start * 1000)
+            end = int(segment.end * 1000)
+            startTime = tool.ms_to_time_string(ms=start)
+            endTime = tool.ms_to_time_string(ms=end)
+            text = segment.text.strip().replace('&#39;', "'")
             text = re.sub(r'&#\d+;', '', text)
 
             # 无有效字符
@@ -157,7 +161,7 @@ def api():
         language = request.form.get("language")
         response_format = request.form.get("response_format")
         print(f'{model=},{language=},{response_format=}')
-        if not os.path.exists(os.path.join(cfg.MODEL_DIR, f'{model}.pt')):
+        if not os.path.exists(os.path.join(cfg.MODEL_DIR, f'models--Systran--faster-whisper-{model}/snapshots/')):
             return jsonify({"code": 1, "msg": f"{model} {cfg.transobj['lang4']}"})
 
         # 如果是mp4
@@ -187,15 +191,17 @@ def api():
             else:
                 return jsonify({"code": 1, "msg": f"{cfg.transobj['lang3']} {ext}"})
         print(f'{ext=}')
-        model = whisper.load_model(model, download_root=cfg.ROOT_DIR + "/models")
-        transcribe = model.transcribe(wav_file, language=language)
-        segments = transcribe['segments']
+        #model = whisper.load_model(model, download_root=cfg.ROOT_DIR + "/models")
+        model = WhisperModel(model, device=device, compute_type="int8", download_root=cfg.ROOT_DIR + "/models")
+        segments,_ = model.transcribe(wav_file, beam_size=5,  vad_filter=True,
+    vad_parameters=dict(min_silence_duration_ms=500),language=language)
+        #segments = transcribe['segments']
         raw_subtitles = []
-        for (sidx, segment) in enumerate(segments):
-            segment['start'] = int(segment['start'] * 1000)
-            segment['end'] = int(segment['end'] * 1000)
-            startTime = tool.ms_to_time_string(ms=segment['start'])
-            endTime = tool.ms_to_time_string(ms=segment['end'])
+        for  segment in segments:
+            start = int(segment['start'] * 1000)
+            end = int(segment['end'] * 1000)
+            startTime = tool.ms_to_time_string(ms=start)
+            endTime = tool.ms_to_time_string(ms=end)
             text = segment['text'].strip().replace('&#39;', "'")
             text = re.sub(r'&#\d+;', '', text)
 

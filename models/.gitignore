@@ -15,4 +15,5 @@ sp.json
 *.mp4
 tmp
 *.log
-models/*.pt
+models--Systran--faster-whisper-base
+models--Systran--faster-whisper-base/*
