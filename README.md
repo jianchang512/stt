@@ -61,6 +61,13 @@ https://github.com/jianchang512/stt/assets/3378335/d716acb6-c20c-4174-9620-f574a
 
 7. 执行  `python  start.py `，等待自动打开本地浏览器窗口。
 
+# 注意：
+
+有时会遇到“cublasxx.dll不存在”的错误，此时需要下载 cuBLAS，然后将dll文件复制到系统目录下
+
+[点击下载 cuBLAS](https://github.com/jianchang512/stt/releases/download/0.0/cuBLAS_win.7z)，解压后将里面的dll文件复制到 C:/Windows/System32下
+
+
 
 
 # api接口
