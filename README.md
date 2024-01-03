@@ -1,4 +1,4 @@
-[Discord](https://discord.gg/TMCM2PfHzQ) / Q群 902124277
+[English](./README_EN.md) / [Discord](https://discord.gg/TMCM2PfHzQ) / Q群 902124277
 
 # 语音识别转文字工具
 
