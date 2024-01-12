@@ -117,7 +117,7 @@ def process():
         return jsonify({"code": 1, "msg": f"{model} {cfg.transobj['lang4']}"})
 
     try:
-        model = WhisperModel(model, device=device, compute_type="int8", download_root=cfg.ROOT_DIR + "/models")
+        model = WhisperModel(model, device=device, compute_type="int8", download_root=cfg.ROOT_DIR + "/models", local_files_only=True)
         #model = whisper.load_model(model, download_root=cfg.ROOT_DIR + "/models")
         segments,_ = model.transcribe(wav_file, beam_size=5,  vad_filter=True,
     vad_parameters=dict(min_silence_duration_ms=500),language=language)
@@ -192,7 +192,7 @@ def api():
                 return jsonify({"code": 1, "msg": f"{cfg.transobj['lang3']} {ext}"})
         print(f'{ext=}')
         #model = whisper.load_model(model, download_root=cfg.ROOT_DIR + "/models")
-        model = WhisperModel(model, device=device, compute_type="int8", download_root=cfg.ROOT_DIR + "/models")
+        model = WhisperModel(model, device=device, compute_type="int8", download_root=cfg.ROOT_DIR + "/models", local_files_only=True)
         segments,_ = model.transcribe(wav_file, beam_size=5,  vad_filter=True,
     vad_parameters=dict(min_silence_duration_ms=500),language=language)
         #segments = transcribe['segments']
