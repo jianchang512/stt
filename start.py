@@ -198,11 +198,11 @@ def api():
         #segments = transcribe['segments']
         raw_subtitles = []
         for  segment in segments:
-            start = int(segment['start'] * 1000)
-            end = int(segment['end'] * 1000)
+            start = int(segment.start * 1000)
+            end = int(segment.end * 1000)
             startTime = tool.ms_to_time_string(ms=start)
             endTime = tool.ms_to_time_string(ms=end)
-            text = segment['text'].strip().replace('&#39;', "'")
+            text = segment.text.strip().replace('&#39;', "'")
             text = re.sub(r'&#\d+;', '', text)
 
             # 无有效字符
