@@ -53,7 +53,7 @@ https://github.com/jianchang512/stt/assets/3378335/d716acb6-c20c-4174-9620-f574a
 
 3. 激活环境，win下命令 `%cd%/venv/scripts/activate`，linux和Mac下命令 `source ./venv/bin/activate`
 
-4. 安装依赖: `pip install -r requirements.txt`,如果报版本冲突错误，请执行 `pip install -r requirements.txt --no-deps`
+4. 安装依赖: `pip install -r requirements.txt`,如果报版本冲突错误，请执行 `pip install -r requirements.txt --no-deps` (MacOS 下请使用 requirements-mac.txt)
 
 5. win下解压 ffmpeg.7z，将其中的`ffmpeg.exe`和`ffprobe.exe`放在项目目录下, linux和mac 到 [ffmpeg官网](https://ffmpeg.org/download.html)下载对应版本ffmpeg，解压其中的`ffmpeg`和`ffprobe`二进制程序放到项目根目录下
 
@@ -68,9 +68,7 @@ https://github.com/jianchang512/stt/assets/3378335/d716acb6-c20c-4174-9620-f574a
 [点击下载 cuBLAS](https://github.com/jianchang512/stt/releases/download/0.0/cuBLAS_win.7z)，解压后将里面的dll文件复制到 C:/Windows/System32下
 
 
-
-
-# api接口
+# Api接口
 
 接口地址: http://127.0.0.1:9977/api
 
@@ -117,7 +115,7 @@ Api 请求示例
     url = "http://127.0.0.1:9977/api"
     # 请求参数  file:音视频文件，language：语言代码，model：模型，response_format:text|json|srt
     # 返回 code==0 成功，其他失败，msg==成功为ok，其他失败原因，data=识别后返回文字
-    files = {"file": open("C:\\Users\\c1\\Videos\\2.wav", "rb")}
+    files = {"file": open("C:/Users/c1/Videos/2.wav", "rb")}
     data={"language":"zh","model":"base","response_format":"json"}
     response = requests.request("POST", url, timeout=600, data=data,files=files)
     print(response.json())

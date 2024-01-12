@@ -2,7 +2,7 @@ venv
 .idea
 build
 dist
-models/models--Systran--faster-whisper-base/*
+models/models--Systran--faster-whisper-base
 *.log
 *.wav
 *.mp3

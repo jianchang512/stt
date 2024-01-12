@@ -7,6 +7,8 @@ from flask import Flask, request, render_template, jsonify, send_from_directory
 import os
 from gevent.pywsgi import WSGIServer, WSGIHandler, LoggingLogAdapter
 from logging.handlers import RotatingFileHandler
+
+import stslib
 from stslib import cfg, tool
 from stslib.cfg import ROOT_DIR
 from faster_whisper import WhisperModel
@@ -53,6 +55,7 @@ def index():
                            cuda=cfg.cuda,
                            lang_code=cfg.lang_code,
                            language=cfg.LANG,
+                           version=stslib.version_str,
                            root_dir=ROOT_DIR.replace('\\', '/'))
 
 
@@ -118,12 +121,9 @@ def process():
 
     try:
         model = WhisperModel(model, device=device, compute_type="int8", download_root=cfg.ROOT_DIR + "/models", local_files_only=True)
-        #model = whisper.load_model(model, download_root=cfg.ROOT_DIR + "/models")
         segments,_ = model.transcribe(wav_file, beam_size=5,  vad_filter=True,
     vad_parameters=dict(min_silence_duration_ms=500),language=language)
-        #segments = transcribe
         raw_subtitles = []
-        #sidx=0
         for segment in segments:
             start = int(segment.start * 1000)
             end = int(segment.end * 1000)
@@ -191,11 +191,9 @@ def api():
             else:
                 return jsonify({"code": 1, "msg": f"{cfg.transobj['lang3']} {ext}"})
         print(f'{ext=}')
-        #model = whisper.load_model(model, download_root=cfg.ROOT_DIR + "/models")
         model = WhisperModel(model, device=device, compute_type="int8", download_root=cfg.ROOT_DIR + "/models", local_files_only=True)
         segments,_ = model.transcribe(wav_file, beam_size=5,  vad_filter=True,
     vad_parameters=dict(min_silence_duration_ms=500),language=language)
-        #segments = transcribe['segments']
         raw_subtitles = []
         for  segment in segments:
             start = int(segment.start * 1000)
@@ -218,12 +216,11 @@ def api():
                 raw_subtitles.append(f'{len(raw_subtitles) + 1}\n{startTime} --> {endTime}\n{text}\n')
         if response_format != 'json':
             raw_subtitles = "\n".join(raw_subtitles)
-        print(raw_subtitles)
         return jsonify({"code": 0, "msg": 'ok', "data": raw_subtitles})
     except Exception as e:
         print(e)
         app.logger.error(f'[api]error: {e}')
-        return jsonify({'code': 2, 'msg': cfg.transobj['lang2']})
+        return jsonify({'code': 2, 'msg': str(e)})
 
 
 @app.route('/checkupdate', methods=['GET', 'POST'])

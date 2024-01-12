@@ -1,1 +1,2 @@
-VERSION=3
+VERSION=4
+version_str="v0.0.4"

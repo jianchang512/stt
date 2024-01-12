@@ -77,12 +77,12 @@
 <body>
 <div class="layui-layout layui-layout-admin">
     <div class="layui-header" style="background: #16b777">
-        <div class="layui-logo layui-hide-xs" style="color: #fff" data-en="Speech Recognition" data-cn="语音识别"></div>
+        <div class="layui-logo layui-hide-xs" style="color: #fff" data-en="Speech Recognition {{ version }}" data-cn="语音识别 {{ version }}"></div>
         <!-- 头部区域（可配合layui 已有的水平导航） -->
         <ul class="layui-nav layui-layout-right">
             <!-- 移动端显示 -->
             <li id="checkupdate" class="layui-nav-item layui-hide "><a
-                    href="https://github.com/jianchang512/sts/releases" class="layui-font-orange"
+                    href="https://github.com/jianchang512/sts/releases" class="layui-font-red"
                     target="_blank"></a>
             </li>
             <li class="layui-nav-item layui-hide-xs"><a href="https://github.com/jianchang512/sts"
@@ -90,9 +90,10 @@
             <li class="layui-nav-item layui-hide-xs"><a href="https://github.com/jianchang512/sts/issue"
                                                         target="_blank" data-en="Post Isue" data-cn="遇到问题?"></a></li>
             <li class="layui-nav-item layui-hide-xs"><a href="https://discord.gg/TMCM2PfHzQ" target="_blank">Discord</a>
-
             </li>
             <li class="layui-nav-item layui-hide-xs"><a href="https://github.com/jianchang512/sts/releases/tag/0.0" target="_blank" data-cn="下载模型" data-en="Download models"></a>
+            </li>
+            <li class="layui-nav-item layui-hide-xs"><a href="https://github.com/jianchang512/pyvideotrans/blob/main/about.md" target="_blank" data-cn="捐助本项目" data-en="Donate the project models"></a>
             </li>
         </ul>
     </div>
