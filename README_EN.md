@@ -61,12 +61,6 @@ https://github.com/jianchang512/stt/assets/3378335/d716acb6-c20c-4174-9620-f574a
 
 7. Execute  `python  start.py `, wait for the local browser window to open automatically.
 
-# Note:
-
-Sometimes you will encounter an error "cublasxx.dll does not exist", at this time you need to download cuBLAS, and then copy the dll file to the system directory
-
-[Click to download cuBLAS](https://github.com/jianchang512/stt/releases/download/0.0/cuBLAS_win.7z), after decompression, copy the dll file inside to C:/Windows/System32
-
 
 
 
@@ -139,12 +133,14 @@ If your computer has Nvidia graphics card, first upgrade the graphics card drive
    ![Image](https://github.com/jianchang512/pyvideotrans/assets/3378335/71f1d7d3-07f9-4579-b310-39284734006b)
 
     Then execute `python testcuda.py`, if it prompts success, it means the installation is correct, otherwise please carefully check and reinstall
+    By default, CPU operation is used. If you are sure to use a NVIDIA graphics card and have configured the CUDA environment, please modify the devtype=CPU in set.ini to devtype=CUDA and restart to use CUDA acceleration
 
 # Notices
 
 0. If you do not have Nvidia graphics card or the CUDA environment is not properly configured, do not use the large/large-v3 model, it may cause the memory to exhaust and crash
 1. Chinese in some cases will output traditional characters
 2. Sometimes you will encounter an error "cublasxx.dll does not exist", at this time you need to download cuBLAS, and then copy the dll file to the system directory, [click to download cuBLAS](https://github.com/jianchang512/stt/releases/download/0.0/cuBLAS_win.7z), after decompression, copy the dll file inside to C:/Windows/System32
+3. By default, CPU operation is used. If you are sure to use a NVIDIA graphics card and have configured the CUDA environment, please modify the devtype=CPU in set.ini to devtype=CUDA and restart to use CUDA acceleration
 
 
 
