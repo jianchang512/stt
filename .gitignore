@@ -9,3 +9,4 @@ models/models--Systran--faster-whisper-base
 *.spec
 *.exe
 *.zip
+stslib/__pycache__
