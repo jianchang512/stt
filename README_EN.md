@@ -160,7 +160,7 @@ If your computer has Nvidia graphics card, first upgrade the graphics card drive
 
 The other projects mainly dependent on this project are
 
-1. https://github.com/openai/whipser
+1. https://github.com/SYSTRAN/faster-whisper
 2. https://github.com/pallets/flask
 3. https://ffmpeg.org/
 4. https://layui.dev
