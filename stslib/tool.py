@@ -9,7 +9,7 @@ from stslib import cfg
 
 def runffmpeg(arg):
     cmd = ["ffmpeg","-hide_banner","-vsync","0","-y"]
-    if cfg.cuda>0:
+    if cfg.devtype =='cuda':
         cmd.extend(["-hwaccel", "cuda","-hwaccel_output_format","cuda"])
     cmd = cmd + arg
     p = subprocess.Popen(cmd,
@@ -28,7 +28,7 @@ def runffmpeg(arg):
             if p.returncode==0:
                 return "ok"
             # 失败
-            if cfg.cuda:
+            if cfg.devtype=='cuda':
                 errs+="[error] Please try upgrading the graphics card driver and reconfigure CUDA"
             return errs
         except subprocess.TimeoutExpired as e:

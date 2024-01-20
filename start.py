@@ -7,13 +7,14 @@ from flask import Flask, request, render_template, jsonify, send_from_directory
 import os
 from gevent.pywsgi import WSGIServer, WSGIHandler, LoggingLogAdapter
 from logging.handlers import RotatingFileHandler
-
+import warnings
+warnings.filterwarnings('ignore')
 import stslib
 from stslib import cfg, tool
 from stslib.cfg import ROOT_DIR
 from faster_whisper import WhisperModel
 
-device = "cuda" if torch.cuda.is_available() else "cpu"
+
 
 class CustomRequestHandler(WSGIHandler):
     def log_request(self):
@@ -51,8 +52,9 @@ def static_files(filename):
 
 @app.route('/')
 def index():
+    sets=cfg.parse_ini()
     return render_template("index.html",
-                           cuda=cfg.cuda,
+                           devtype=sets.get('devtype'),
                            lang_code=cfg.lang_code,
                            language=cfg.LANG,
                            version=stslib.version_str,
@@ -120,7 +122,8 @@ def process():
         return jsonify({"code": 1, "msg": f"{model} {cfg.transobj['lang4']}"})
 
     try:
-        model = WhisperModel(model, device=device, compute_type="int8", download_root=cfg.ROOT_DIR + "/models", local_files_only=True)
+        sets=cfg.parse_ini()        
+        model = WhisperModel(model, device=sets.get('devtype'), compute_type=sets.get('cuda_com_type'), download_root=cfg.ROOT_DIR + "/models", local_files_only=True)
         segments,_ = model.transcribe(wav_file, beam_size=5,  vad_filter=True,
     vad_parameters=dict(min_silence_duration_ms=500),language=language)
         raw_subtitles = []
@@ -191,7 +194,8 @@ def api():
             else:
                 return jsonify({"code": 1, "msg": f"{cfg.transobj['lang3']} {ext}"})
         print(f'{ext=}')
-        model = WhisperModel(model, device=device, compute_type="int8", download_root=cfg.ROOT_DIR + "/models", local_files_only=True)
+        sets=cfg.parse_ini()
+        model = WhisperModel(model, device=sets.get('devtype'), compute_type=sets.get('cuda_com_type'), download_root=cfg.ROOT_DIR + "/models", local_files_only=True)
         segments,_ = model.transcribe(wav_file, beam_size=5,  vad_filter=True,
     vad_parameters=dict(min_silence_duration_ms=500),language=language)
         raw_subtitles = []
@@ -233,6 +237,8 @@ if __name__ == '__main__':
     try:
         threading.Thread(target=tool.checkupdate).start()
         try:
+            if cfg.devtype=='cpu':
+                print('\n如果设备使用英伟达显卡并且CUDA环境已正确安装，可修改set.ini中\ndevtype=cpu 为 devtype=cuda, 然后重新启动以加快识别速度\n')
             host = cfg.web_address.split(':')
             http_server = WSGIServer((host[0], int(host[1])), app, handler_class=CustomRequestHandler)
             threading.Thread(target=tool.openweb, args=(cfg.web_address,)).start()

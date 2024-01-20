@@ -39,7 +39,7 @@
         #upload {
             display: block;
             margin-bottom: 10px;
-            box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
+            border-style:solid;
             padding: 50px 30px;
         }
 
@@ -93,14 +93,14 @@
             </li>
             <li class="layui-nav-item layui-hide-xs"><a href="https://github.com/jianchang512/sts/releases/tag/0.0" target="_blank" data-cn="下载模型" data-en="Download models"></a>
             </li>
-            <li class="layui-nav-item layui-hide-xs"><a href="https://github.com/jianchang512/pyvideotrans/blob/main/about.md" target="_blank" data-cn="捐助本项目" data-en="Donate the project models"></a>
+            <li class="layui-nav-item layui-hide-xs"><a href="javascript:;" onclick="showjz(this)"  data-cn="捐助本项目" data-en="Donate the project models"></a>
             </li>
         </ul>
     </div>
     <div id="content">
         <!-- 内容主体区域 -->
-        <div class="layui-upload-drag layui-border-red" id="upload">
-            <i class="layui-icon layui-icon-upload layui-font-red"></i>
+        <div class="layui-upload-drag layui-border-green" id="upload">
+            <i class="layui-icon layui-icon-upload layui-font-green"></i>
             <div data-cn="点击上传，或将音频视频文件拖拽到此处(wav,mp3,flac,mp4,mov,mkv,avi,mpeg)"
                  data-en="click to upload or drag video or audio to here(wav,mp3,flac,mp4,mov,mkv,avi,mpeg)"></div>
             <div class="layui-hide my-1" id="preview"></div>
@@ -142,11 +142,7 @@
                 <input type="hidden" id="wav_name" name="wav_name">
                 <button type="submit" class="layui-btn layui-btn-danger" lay-submit lay-filter="submit" data-cn="立即识别"
                         data-en="Start Separate"></button>
-                {% if cuda %}
-                    <span class="worktype">on CUDA</span>
-                {% else %}
-                    <span class="worktype">on CPU </span>
-                {% endif %}
+                <span class="worktype">on {{ devtype.upper()}}</span>
             </div>
             <div class="layui-label-text layui-font-12 my-1 layui-font-gray"
                  data-en="The recognition of base to large-v3 models is becoming increasingly accurate, but it also consumes more resources. If you do not have the CUDA acceleration environment, do not choose large series models"
@@ -244,6 +240,19 @@
         }, 60000);
 
     });
+    function showjz(el){
+        let lag=language === 'zh'?'如果项目对你有帮助，节省了时间和金钱，请考虑小额资助开发者，帮助项目能够长期保持更新和维护。':'If the project is helpful to you, saving time and money, please consider providing small funding to developers help the project can be updated and maintained for a long time';
+        layui.layer.open({
+          type: 1, // page 层类型
+          area: ['300px', '450px'],
+          title: false,
+          shade: 0.6, // 遮罩透明度
+          shadeClose: true, // 点击遮罩区域，关闭弹层
+          maxmin: true, // 允许全屏最小化
+          anim: 0, // 0-6 的动画形式，-1 不开启
+          content: `<div style="padding: 10px; "><div class="fs-6 text-black-500">${lag}</div><img src="/static/images/wx.png" width="200px" style="display:block;margin:10px auto;"><img src="/static/images/alipay.png" width="200px" style="display:block;margin:10px auto"></div>`
+        });
+    }
 </script>
 </body>
 </html>

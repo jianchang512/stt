@@ -2,13 +2,48 @@ import locale
 import os
 import sys
 import torch
-web_address = '127.0.0.1:9977'
-LANG = "en" if locale.getdefaultlocale()[0].split('_')[0].lower() != 'zh' else "zh"
-
+import re
 ROOT_DIR = os.getcwd()
+
+def parse_ini(file=os.path.join(ROOT_DIR,'set.ini')):
+    sets={
+        "web_address":"127.0.0.1:9977", 
+        "lang":"en" if locale.getdefaultlocale()[0].split('_')[0].lower() != 'zh' else "zh", 
+        "devtype":"cpu", 
+        "cuda_com_type":"int8"
+    }
+    if not os.path.exists(file):
+        return sets
+    with open(file, 'r', encoding='utf-8') as f:
+        for line in f.readlines():
+            if not line.strip() or line.strip().startswith(";") :
+                continue
+            line=[ x.strip() for x in line.strip().split('=', maxsplit=1)]
+            if len(line)!=2:
+                continue
+            if line[1]=='false' or line[1]=='true':
+                sets[line[0]] = True if line[1]=='true' else False
+            elif re.match(r'^\d+$', line[1]):
+                sets[line[0]]=int(line[1])
+            elif line[1]:
+                sets[line[0]]=str(line[1]).lower()
+    return sets
+
+sets=parse_ini()
+print(sets)
+web_address=sets.get('web_address')
+LANG=sets.get('lang')
+devtype=sets.get('devtype')
+cuda_com_type=sets.get('cuda_com_type')
+
+
+
 MODEL_DIR = os.path.join(ROOT_DIR, 'models')
 STATIC_DIR = os.path.join(ROOT_DIR, 'static')
 TMP_DIR = os.path.join(STATIC_DIR, 'tmp')
+
+
+
 
 if not os.path.exists(TMP_DIR):
     os.makedirs(TMP_DIR, 0o777, exist_ok=True)
@@ -81,7 +116,6 @@ langlist = {
     }
 }
 updatetips = ""
-cuda = True if torch.cuda.is_available() else False
 transobj = langlist[LANG]
 lang_code=language_code_list[LANG]
 
