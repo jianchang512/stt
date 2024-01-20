@@ -152,7 +152,7 @@ Api 请求示例
 
 本项目主要依赖的其他项目
 
-1. https://github.com/openai/whipser
+1. https://github.com/SYSTRAN/faster-whisper
 2. https://github.com/pallets/flask
 3. https://ffmpeg.org/
 4. https://layui.dev
