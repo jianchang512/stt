@@ -15,7 +15,6 @@ from stslib.cfg import ROOT_DIR
 from faster_whisper import WhisperModel
 
 
-
 class CustomRequestHandler(WSGIHandler):
     def log_request(self):
         pass
@@ -26,8 +25,7 @@ class CustomRequestHandler(WSGIHandler):
 log = logging.getLogger('werkzeug')
 log.handlers[:] = []
 log.setLevel(logging.WARNING)
-app = Flask(__name__, static_folder=os.path.join(ROOT_DIR, 'static'), static_url_path='/static',
-            template_folder=os.path.join(ROOT_DIR, 'templates'))
+app = Flask(__name__, static_folder=os.path.join(ROOT_DIR, 'static'), static_url_path='/static',  template_folder=os.path.join(ROOT_DIR, 'templates'))
 root_log = logging.getLogger()  # Flask的根日志记录器
 root_log.handlers = []
 root_log.setLevel(logging.WARNING)
@@ -101,33 +99,18 @@ def upload():
         return jsonify({'code': 2, 'msg': cfg.transobj['lang2']})
 
 
-# 根据文本返回tts结果，返回 name=文件名字，filename=文件绝对路径
-# 请求端根据需要自行选择使用哪个
-# params
-# wav_name:tmp下的wav文件
-# model 模型名称
-@app.route('/process', methods=['GET', 'POST'])
-def process():
-    # 原始字符串
-    wav_name = request.form.get("wav_name").strip()
-    model = request.form.get("model")
-    # 语言
-    language = request.form.get("language")
-    # 返回格式 json txt srt
-    data_type = request.form.get("data_type")
-    wav_file = os.path.join(cfg.TMP_DIR, wav_name)
-    if not os.path.exists(wav_file):
-        return jsonify({"code": 1, "msg": f"{wav_file} {cfg.langlist['lang5']}"})
-    if not os.path.exists(os.path.join(cfg.MODEL_DIR, f'models--Systran--faster-whisper-{model}/snapshots/')):
-        return jsonify({"code": 1, "msg": f"{model} {cfg.transobj['lang4']}"})
-
+def shibie(*, wav_name=None, model=None, language=None, data_type=None, wav_file=None, key=None):
     try:
         sets=cfg.parse_ini()        
-        model = WhisperModel(model, device=sets.get('devtype'), compute_type=sets.get('cuda_com_type'), download_root=cfg.ROOT_DIR + "/models", local_files_only=True)
-        segments,_ = model.transcribe(wav_file, beam_size=5,  vad_filter=True,
+        modelobj = WhisperModel(model, device=sets.get('devtype'), compute_type=sets.get('cuda_com_type'), download_root=cfg.ROOT_DIR + "/models", local_files_only=True, num_workers=os.cpu_count(),cpu_threads=os.cpu_count())
+        cfg.progressbar=0
+        segments,info = modelobj.transcribe(wav_file, beam_size=5,  vad_filter=True,
     vad_parameters=dict(min_silence_duration_ms=500),language=language)
+        total_duration = round(info.duration, 2)  # Same precision as the Whisper timestamps.
+
         raw_subtitles = []
         for segment in segments:
+            cfg.progressbar=round(segment.end/total_duration, 2)
             start = int(segment.start * 1000)
             end = int(segment.end * 1000)
             startTime = tool.ms_to_time_string(ms=start)
@@ -147,12 +130,56 @@ def process():
                 raw_subtitles.append(text)
             else:
                 raw_subtitles.append(f'{len(raw_subtitles) + 1}\n{startTime} --> {endTime}\n{text}\n')
+        cfg.progressbar=1
         if data_type != 'json':
             raw_subtitles = "\n".join(raw_subtitles)
-        return jsonify({"code": 0, "msg": 'ok', "data": raw_subtitles})
+        cfg.progressresult[key]=raw_subtitles
     except Exception as e:
-        return jsonify({"code": 1, "msg": str(e)})
+        cfg.progressresult[key]=str(e)
+        print(str(e))
 
+# 根据文本返回tts结果，返回 name=文件名字，filename=文件绝对路径
+# 请求端根据需要自行选择使用哪个
+# params
+# wav_name:tmp下的wav文件
+# model 模型名称
+@app.route('/process', methods=['GET', 'POST'])
+def process():
+    # 原始字符串
+    wav_name = request.form.get("wav_name").strip()
+    model = request.form.get("model")
+    # 语言
+    language = request.form.get("language")
+    # 返回格式 json txt srt
+    data_type = request.form.get("data_type")
+    wav_file = os.path.join(cfg.TMP_DIR, wav_name)
+    if not os.path.exists(wav_file):
+        return jsonify({"code": 1, "msg": f"{wav_file} {cfg.langlist['lang5']}"})
+    if not os.path.exists(os.path.join(cfg.MODEL_DIR, f'models--Systran--faster-whisper-{model}/snapshots/')):
+        return jsonify({"code": 1, "msg": f"{model} {cfg.transobj['lang4']}"})
+    # 重设进度为0
+    cfg.progressbar=0
+    #重设结果为none
+    key=f'{wav_name}{model}{language}{data_type}'
+    cfg.progressresult[key]=None
+    #新线程启动实际任务
+    threading.Thread(target=shibie, kwargs={"wav_name":wav_name, "model":model, "language":language, "data_type":data_type, "wav_file":wav_file, "key":key}).start()
+    return jsonify({"code":0, "msg":"ing"})
+    
+
+# 获取进度及完成后的结果
+@app.route('/progressbar', methods=['GET', 'POST'])
+def progressbar():
+    # 原始字符串
+    wav_name = request.form.get("wav_name").strip()
+    model = request.form.get("model")
+    # 语言
+    language = request.form.get("language")
+    # 返回格式 json txt srt
+    data_type = request.form.get("data_type")
+    if cfg.progressbar>=1:
+        return jsonify({"code":0, "data":cfg.progressbar, "msg":"ok", "result":cfg.progressresult[f'{wav_name}{model}{language}{data_type}']})
+    return jsonify({"code":0, "data":cfg.progressbar, "msg":"ok"})
 
 
 @app.route('/api',methods=['GET','POST'])
@@ -195,7 +222,7 @@ def api():
                 return jsonify({"code": 1, "msg": f"{cfg.transobj['lang3']} {ext}"})
         print(f'{ext=}')
         sets=cfg.parse_ini()
-        model = WhisperModel(model, device=sets.get('devtype'), compute_type=sets.get('cuda_com_type'), download_root=cfg.ROOT_DIR + "/models", local_files_only=True)
+        model = WhisperModel(model, device=sets.get('devtype'), compute_type=sets.get('cuda_com_type'), download_root=cfg.ROOT_DIR + "/models", local_files_only=True, num_workers=os.cpu_count(),cpu_threads=os.cpu_count())
         segments,_ = model.transcribe(wav_file, beam_size=5,  vad_filter=True,
     vad_parameters=dict(min_silence_duration_ms=500),language=language)
         raw_subtitles = []

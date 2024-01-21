@@ -147,11 +147,14 @@
             <div class="layui-label-text layui-font-12 my-1 layui-font-gray"
                  data-en="The recognition of base to large-v3 models is becoming increasingly accurate, but it also consumes more resources. If you do not have the CUDA acceleration environment, do not choose large series models"
                  data-cn="base到large-v3模型识别越来越精确，但也更消耗资源，如果不具备CUDA加速环境，请勿选用large系模型"></div>
-
         </form>
+        <div id="progressbar" class="layui-progress layui-hide" lay-filter="progressbar">
+          <div class="layui-progress-bar" lay-showpercent></div>
+        </div>
 
         <div class="layui-card ">
-            <div class="layui-card-body">
+            <div class="layui-card-body" style="padding:10px 0">
+                <div id="haoshi"></div>
                 <textarea placeholder-cn="识别结果在此显示" placeholder-en="Result list in here" class="layui-textarea" id="result" readonly cols="30" rows="10"></textarea>
             </div>
         </div>
@@ -162,6 +165,7 @@
 <script>
     let language = '{{ language }}';
     window.$ = layui.$;
+    let intervalId=null;
     if (language === 'zh') {
         $("[data-cn]").each(function () {
             $(this).html($(this).attr('data-cn'));
@@ -180,6 +184,7 @@
     }
     //JS
     layui.use(function () {
+        var element = layui.element;
         var layer = layui.layer;
 
         var upload = layui.upload;
@@ -212,21 +217,47 @@
         });
         // 提交事件
         form.on('submit(submit)', function (data) {
+            $('#progressbar').removeClass('layui-hide');
             var field = data.field; // 获取表单全部字段值
             if (!field['wav_name']) {
                 layer.alert(language === 'zh' ? '必须先上传要识别的音频或视频文件!' : 'The file to be recognition must be uploaded first!', {title: false})
                 return false;
             }
-            // 显示填写结果，仅作演示用
             layindex1 = layer.load();
-            // 此处可执行 Ajax 等操作
+            let t=(new Date).getTime();
+            let getprogress=function(){
+                    $.post('/progressbar',field, function (res) {
+                            if (res.code !== 0) {
+                                layer.close(layindex1)
+                                return layer.alert(res.msg, {title: false})
+                            }
+                            element.progress('progressbar', `${res['data']*100}%`);                            let hs=parseInt( ((new Date).getTime()-t )/1000 );
+                            $("#haoshi").text(`${hs} sec`);
+                            if(res['data']>=1){
+                                if(res['result']){
+                                    try{
+                                        $("#result").val(field['data_type'] === 'json' ? JSON.stringify(res.result) : res.result)
+                                    }catch(e){
+                                        $("#result").val(res.result)
+                                    }
+                                    $("#result").removeAttr('readonly');
+                                    $('#progressbar').addClass('layui-hide');
+                                }                                
+                                layer.close(layindex1);
+                                return;                
+                            }
+                            setTimeout(()=>{
+                                getprogress();
+                            }, 500);
+                    });
+            }            
             $.post('/process', field, function (res) {
-                layer.close(layindex1)
+                $("#haoshi").text('')
                 if (res.code !== 0) {
+                    layer.close(layindex1)
                     return layer.alert(res.msg, {title: false})
                 }
-                $("#result").val(field['data_type'] === 'json' ? JSON.stringify(res.data) : res.data);
-                $("#result").removeAttr('readonly');
+                getprogress();
             });
             return false; // 阻止默认 form 跳转
         });
@@ -240,6 +271,7 @@
         }, 60000);
 
     });
+    
     function showjz(el){
         let lag=language === 'zh'?'如果项目对你有帮助，节省了时间和金钱，请考虑小额资助开发者，帮助项目能够长期保持更新和维护。':'If the project is helpful to you, saving time and money, please consider providing small funding to developers help the project can be updated and maintained for a long time';
         layui.layer.open({
