@@ -101,7 +101,7 @@ def upload():
 
 def shibie(*, wav_name=None, model=None, language=None, data_type=None, wav_file=None, key=None):
     try:
-        sets=cfg.parse_ini()        
+        sets=cfg.parse_ini()       
         modelobj = WhisperModel(model, device=sets.get('devtype'), compute_type=sets.get('cuda_com_type'), download_root=cfg.ROOT_DIR + "/models", local_files_only=True)
         cfg.progressbar=0
         segments,info = modelobj.transcribe(wav_file, beam_size=5,  vad_filter=True,
@@ -223,6 +223,7 @@ def api():
         print(f'{ext=}')
         sets=cfg.parse_ini()
         model = WhisperModel(model, device=sets.get('devtype'), compute_type=sets.get('cuda_com_type'), download_root=cfg.ROOT_DIR + "/models", local_files_only=True)
+
         segments,_ = model.transcribe(wav_file, beam_size=5,  vad_filter=True,
     vad_parameters=dict(min_silence_duration_ms=500),language=language)
         raw_subtitles = []
