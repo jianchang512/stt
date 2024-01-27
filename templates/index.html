@@ -156,6 +156,9 @@
             <div class="layui-card-body" style="padding:10px 0">
                 <div id="haoshi"></div>
                 <textarea placeholder-cn="识别结果在此显示" placeholder-en="Result list in here" class="layui-textarea" id="result" readonly cols="30" rows="10"></textarea>
+                <div >
+                <a id="download_btn" href="javascript:;" onclick="download_act(this)" class="layui-btn layui-btn-small layui-hide" data-en="Download" data-cn="下载结果"></a>
+                </div>
             </div>
         </div>
     </div>
@@ -165,6 +168,7 @@
 <script>
     let language = '{{ language }}';
     window.$ = layui.$;
+    window.download_type="txt"
     let intervalId=null;
     if (language === 'zh') {
         $("[data-cn]").each(function () {
@@ -226,6 +230,9 @@
             layindex1 = layer.load();
             let t=(new Date).getTime();
             let getprogress=function(){
+                    window.download_type="";
+                    $('result').val('');
+                    $('#download_btn').addClass('layui-hide');
                     $.post('/progressbar',field, function (res) {
                             if (res.code !== 0) {
                                 layer.close(layindex1)
@@ -242,7 +249,9 @@
                                     }
                                     $("#result").removeAttr('readonly');
                                     $('#progressbar').addClass('layui-hide');
-                                }                                
+                                    window.download_type=field['data_type'];
+                                    $('#download_btn').removeClass('layui-hide');
+                                }
                                 layer.close(layindex1);
                                 return;                
                             }
@@ -271,6 +280,26 @@
         }, 60000);
 
     });
+    
+    function download_act() {
+      if(!window.download_type){
+          return;
+      }  
+      let type=window.download_type=='text'?'txt':window.download_type
+      var text = document.getElementById("result").value;
+        var blob = new Blob([text], {type: "text/plain;charset=utf-8"});
+        var url = URL.createObjectURL(blob);
+        
+        var element = document.createElement('a');
+        element.setAttribute('href', url);
+        element.setAttribute('download', "result."+type);
+        element.style.display = 'none';
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+        URL.revokeObjectURL(url);
+
+    }
     
     function showjz(el){
         let lag=language === 'zh'?'如果项目对你有帮助，节省了时间和金钱，请考虑小额资助开发者，帮助项目能够长期保持更新和维护。':'If the project is helpful to you, saving time and money, please consider providing small funding to developers help the project can be updated and maintained for a long time';
