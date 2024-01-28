@@ -1,7 +1,0 @@
-torch==2.1.2
-pydub
-flask
-requests
-gevent
-python-dotenv
-faster-whisper

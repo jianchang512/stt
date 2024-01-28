@@ -1,8 +1,6 @@
-torch==2.1.2 --index-url https://download.pytorch.org/whl/cu121
-pydub
+torch==2.1.2
 flask
 requests
 gevent
-python-dotenv
 faster-whisper
 fsspec

@@ -51,7 +51,7 @@ https://github.com/jianchang512/stt/assets/3378335/d716acb6-c20c-4174-9620-f574a
 
 2. Create a virtual environment `python -m venv venv`
 
-3. Activate the environment, the command under win is `%cd%/venv/scripts/activate`, the command under linux and Mac is `source ./venv/bin/activate`
+3. Activate the environment, the command under win is `%cd%/venv/scripts/activate`, the  linux and Mac  go to google and search. if want to use cuda,and exec `pip uninstall -y torch` ,`pip install torch  --index-url https://download.pytorch.org/whl/cu121`
 
 4. Install dependencies: `pip install -r requirements.txt`, if you report a version conflict error, please run `pip install -r requirements.txt --no-deps`
 
@@ -124,7 +124,7 @@ Api request example
 **Install CUDA Tools** [Detailed installation method](https://juejin.cn/post/7318704408727519270)
 
 If your computer has Nvidia graphics card, first upgrade the graphics card driver to the latest, and then to install the corresponding 
-   [CUDA Toolkit 11.8](https://developer.nvidia.com/cuda-downloads)  and  [cudnn for CUDA11.X](https://developer.nvidia.com/rdp/cudnn-archive).
+   [CUDA Toolkit](https://developer.nvidia.com/cuda-downloads)  and  [cudnn for CUDA11.X](https://developer.nvidia.com/rdp/cudnn-archive).
    
    After the installation is completed, press `Win + R`, type `cmd` and then press enter. In the pop-up window, type `nvcc --version`, confirm that there is version information displayed, similar to the graphic shown
    ![Image](https://github.com/jianchang512/pyvideotrans/assets/3378335/e68de07f-4bb1-4fc9-bccd-8f841825915a)
