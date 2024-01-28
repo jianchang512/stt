@@ -10,7 +10,13 @@ def parse_ini(file=os.path.join(ROOT_DIR,'set.ini')):
         "web_address":"127.0.0.1:9977", 
         "lang":"en" if locale.getdefaultlocale()[0].split('_')[0].lower() != 'zh' else "zh", 
         "devtype":"cpu", 
-        "cuda_com_type":"int8"
+        "cuda_com_type":"int8",
+        "beam_size":1,
+        "best_of":1,
+        "vad":True,
+        "temperature":0,
+        "condition_on_previous_text":False
+
     }
     if not os.path.exists(file):
         return sets
@@ -21,8 +27,10 @@ def parse_ini(file=os.path.join(ROOT_DIR,'set.ini')):
             line=[ x.strip() for x in line.strip().split('=', maxsplit=1)]
             if len(line)!=2:
                 continue
-            if line[1]=='false' or line[1]=='true':
-                sets[line[0]] = True if line[1]=='true' else False
+            if line[1]=='false':
+                sets[line[0]] = False
+            elif line[1]=='true':
+                sets[line[0]] = True
             elif re.match(r'^\d+$', line[1]):
                 sets[line[0]]=int(line[1])
             elif line[1]:
