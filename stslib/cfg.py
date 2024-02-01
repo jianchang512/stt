@@ -50,7 +50,7 @@ MODEL_DIR = os.path.join(ROOT_DIR, 'models')
 STATIC_DIR = os.path.join(ROOT_DIR, 'static')
 TMP_DIR = os.path.join(STATIC_DIR, 'tmp')
 
-progressbar=0
+progressbar={}
 progressresult={}
 
 
