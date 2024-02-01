@@ -156,11 +156,11 @@ def process():
         return jsonify({"code": 1, "msg": f"{wav_file} {cfg.langlist['lang5']}"})
     if not os.path.exists(os.path.join(cfg.MODEL_DIR, f'models--Systran--faster-whisper-{model}/snapshots/')):
         return jsonify({"code": 1, "msg": f"{model} {cfg.transobj['lang4']}"})
+    key=f'{wav_name}{model}{language}{data_type}'
+    #重设结果为none
+    cfg.progressresult[key]=None
     # 重设进度为0
     cfg.progressbar[key]=0
-    #重设结果为none
-    key=f'{wav_name}{model}{language}{data_type}'
-    cfg.progressresult[key]=None
     #新线程启动实际任务
     threading.Thread(target=shibie, kwargs={"wav_name":wav_name, "model":model, "language":language, "data_type":data_type, "wav_file":wav_file, "key":key}).start()
     return jsonify({"code":0, "msg":"ing"})
