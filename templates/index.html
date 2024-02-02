@@ -1,193 +1,385 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <meta charset="utf-8">
+  <head>
+    <meta charset="utf-8" />
     <title data-cn="语音识别转文字" data-en="Speech Recognition"></title>
-    <meta name="renderer" content="webkit">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="/static/layui/css/layui.css" rel="stylesheet">
+    <meta name="renderer" content="webkit" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="/static/layui/css/layui.css" rel="stylesheet" />
     <style>
-        .flex {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+      .preview-scroll {
+        max-height: 450px;
+        overflow: auto;
+      }
+      .flex {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 10px;
+        margin-left: 200px;
+      }
+      .flex-left {
+        display: flex;
+        align-items: center;
+      }
 
-        .flex-left {
-            display: flex;
-            align-items: center;
-        }
+      .my-1 {
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
 
-        .my-1 {
-            margin-top: 10px;
-            margin-bottom: 10px;
-        }
+      .p-2 {
+        padding: 15px;
+      }
 
-        .p-2 {
-            padding: 15px;
-        }
+      .text-center {
+        text-align: center;
+      }
 
-        .text-center {
-            text-align: center
-        }
+      .name {
+        margin-right: 8px;
+        width: 200px;
+      }
 
-        .name {
-            margin-right: 8px;
-        }
+      #upload {
+        display: block;
+        margin-bottom: 10px;
+        border-style: solid;
+        padding: 50px 30px;
+      }
 
-        #upload {
-            display: block;
-            margin-bottom: 10px;
-            border-style:solid;
-            padding: 50px 30px;
-        }
+      .layui-form {
+        margin: 15px auto;
+      }
 
-        .layui-form {
-            margin: 15px auto;
-        }
+      .result-list {
+        margin-top: 8px;
+        margin-bottom: 8px;
+        padding: 5px;
+        border-bottom: 1px solid #f1f1f1;
+      }
 
-        .result-list {
-            margin-top: 8px;
-            margin-bottom: 8px;
-            padding: 5px;
-            border-bottom: 1px solid #f1f1f1;
-        }
+      .result-list .name {
+        width: 150px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        text-align: left;
+      }
 
-        .result-list .name {
-            width: 150px;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-            text-align: left;
-        }
+      #content {
+        width: 80%;
+        min-width: 800px;
+        max-width: 1400px;
+        margin: 75px auto 50px;
+      }
 
-        #content {
-            width: 80%;
-            min-width: 800px;
-            max-width: 1400px;
-            margin: 75px auto 50px;
-        }
-
-        .worktype {
-            color: #999;
-            font-size: 12px
-        }
+      .worktype {
+        color: #999;
+        font-size: 12px;
+      }
+      .text-res {
+        margin-bottom: 15px;
+      }
+      .text-res-file {
+        margin-bottom: 6px;
+      }
+      .status {
+        margin-left: 20px;
+        width: 200px;
+        white-space: break-spaces;
+      }
     </style>
-</head>
-<body>
-<div class="layui-layout layui-layout-admin">
-    <div class="layui-header" style="background: #16b777">
-        <div class="layui-logo layui-hide-xs" style="color: #fff" data-en="Speech Recognition {{ version }}" data-cn="语音识别 {{ version }}"></div>
+  </head>
+  <body>
+    <div class="layui-layout layui-layout-admin">
+      <div class="layui-header" style="background: #16b777">
+        <div
+          class="layui-logo layui-hide-xs"
+          style="color: #fff"
+          data-en="Speech Recognition {{ version }}"
+          data-cn="语音识别 {{ version }}"
+        ></div>
         <!-- 头部区域（可配合layui 已有的水平导航） -->
         <ul class="layui-nav layui-layout-right">
-            <!-- 移动端显示 -->
-            <li id="checkupdate" class="layui-nav-item layui-hide "><a
-                    href="https://github.com/jianchang512/sts/releases" class="layui-font-red"
-                    target="_blank"></a>
-            </li>
-            <li class="layui-nav-item layui-hide-xs"><a href="https://github.com/jianchang512/sts"
-                                                        target="_blank">Github</a></li>
-            <li class="layui-nav-item layui-hide-xs"><a href="https://github.com/jianchang512/sts/issue"
-                                                        target="_blank" data-en="Post Isue" data-cn="遇到问题?"></a></li>
-            <li class="layui-nav-item layui-hide-xs"><a href="https://discord.gg/TMCM2PfHzQ" target="_blank">Discord</a>
-            </li>
-            <li class="layui-nav-item layui-hide-xs"><a href="https://github.com/jianchang512/sts/releases/tag/0.0" target="_blank" data-cn="下载模型" data-en="Download models"></a>
-            </li>
-            <li class="layui-nav-item layui-hide-xs"><a href="javascript:;" onclick="showjz(this)"  data-cn="捐助本项目" data-en="Donate the project models"></a>
-            </li>
+          <!-- 移动端显示 -->
+          <li id="checkupdate" class="layui-nav-item layui-hide">
+            <a
+              href="https://github.com/jianchang512/sts/releases"
+              class="layui-font-red"
+              target="_blank"
+            ></a>
+          </li>
+          <li class="layui-nav-item layui-hide-xs">
+            <a href="https://github.com/jianchang512/sts" target="_blank"
+              >Github</a
+            >
+          </li>
+          <li class="layui-nav-item layui-hide-xs">
+            <a
+              href="https://github.com/jianchang512/sts/issue"
+              target="_blank"
+              data-en="Post Isue"
+              data-cn="遇到问题?"
+            ></a>
+          </li>
+          <li class="layui-nav-item layui-hide-xs">
+            <a href="https://discord.gg/TMCM2PfHzQ" target="_blank">Discord</a>
+          </li>
+          <li class="layui-nav-item layui-hide-xs">
+            <a
+              href="https://github.com/jianchang512/sts/releases/tag/0.0"
+              target="_blank"
+              data-cn="下载模型"
+              data-en="Download models"
+            ></a>
+          </li>
+          <li class="layui-nav-item layui-hide-xs">
+            <a
+              href="javascript:;"
+              onclick="showjz(this)"
+              data-cn="捐助本项目"
+              data-en="Donate the project models"
+            ></a>
+          </li>
         </ul>
-    </div>
-    <div id="content">
+      </div>
+      <div id="content">
         <!-- 内容主体区域 -->
         <div class="layui-upload-drag layui-border-green" id="upload">
-            <i class="layui-icon layui-icon-upload layui-font-green"></i>
-            <div data-cn="点击上传，或将音频视频文件拖拽到此处(wav,mp3,flac,mp4,mov,mkv,avi,mpeg)"
-                 data-en="click to upload or drag video or audio to here(wav,mp3,flac,mp4,mov,mkv,avi,mpeg)"></div>
-            <div class="layui-hide my-1" id="preview"></div>
+          <i class="layui-icon layui-icon-upload layui-font-green"></i>
+          <div
+            data-cn="点击上传，或将音频视频文件拖拽到此处(wav,mp3,flac,mp4,mov,mkv,avi,mpeg)"
+            data-en="click to upload or drag video or audio to here(wav,mp3,flac,mp4,mov,mkv,avi,mpeg)"
+          ></div>
+          <div class="layui-hide my-1" id="preview">
+            <div class="preview-scroll"></div>
+          </div>
         </div>
         <form class="layui-form text-center">
-            <div class="layui-form-item layui-inline">
-                <label class="layui-form-label" style="width: auto" data-cn="选择发音语言" data-en="Choose Pronunciation Language"></label>
-                <div class="layui-input-inline">
-                    <select name="language">
-                        {% for name,val in lang_code.items() %}
-                            <option value="{{ val[0] }}">{{ name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
+          <div class="layui-form-item layui-inline">
+            <label
+              class="layui-form-label"
+              style="width: auto"
+              data-cn="选择发音语言"
+              data-en="Choose Pronunciation Language"
+            ></label>
+            <div class="layui-input-inline">
+              <select name="language">
+                {% for name,val in lang_code.items() %}
+                <option value="{{ val[0] }}">{{ name }}</option>
+                {% endfor %}
+              </select>
             </div>
-            <div class="layui-form-item layui-inline">
-                <label class="layui-form-label" style="width: auto" data-cn="返回文字格式" data-en="Return to text format"></label>
-                <div class="layui-input-inline">
-                    <select name="data_type">
-                        <option value="srt" data-cn="srt字幕格式" data-en="Subtitles srt files"></option>
-                        <option value="json" >json</option>
-                        <option value="text" data-cn="纯文字" data-en="text"></option>
-                    </select>
-                </div>
+          </div>
+          <div class="layui-form-item layui-inline">
+            <label
+              class="layui-form-label"
+              style="width: auto"
+              data-cn="返回文字格式"
+              data-en="Return to text format"
+            ></label>
+            <div class="layui-input-inline">
+              <select name="data_type">
+                <option
+                  value="srt"
+                  data-cn="srt字幕格式"
+                  data-en="Subtitles srt files"
+                ></option>
+                <option value="json">json</option>
+                <option value="text" data-cn="纯文字" data-en="text"></option>
+              </select>
             </div>
-            <div class="layui-form-item layui-inline">
-                <label class="layui-form-label" style="width: auto" data-cn="选择要使用的模型" data-en="Select model"></label>
-                <div class="layui-input-inline">
-                    <select name="model">
-                        <option value="base">base</option>
-                        <option value="small">small</option>
-                        <option value="medium">medium</option>
-                        <option value="large-v3">large-v3</option>
-                    </select>
-                </div>
+          </div>
+          <div
+            class="layui-label-text layui-font-12 my-1 layui-font-gray"
+            data-en="The recognition of base to large-v3 models is becoming increasingly accurate, but it also consumes more resources. If you do not have the CUDA acceleration environment, do not choose large series models"
+            data-cn="base到large-v3模型识别越来越精确，但也更消耗资源，如果不具备CUDA加速环境，请勿选用large系模型"
+          ></div>
+          <div class="layui-form-item layui-inline">
+            <label
+              class="layui-form-label"
+              style="width: auto"
+              data-cn="选择要使用的模型"
+              data-en="Select model"
+            ></label>
+            <div class="layui-input-inline">
+              <select name="model">
+                <option value="base">base</option>
+                <option value="small">small</option>
+                <option value="medium">medium</option>
+                <option value="large-v3">large-v3</option>
+              </select>
             </div>
+          </div>
 
-            <div class="layui-form-item layui-form-block">
-                <input type="hidden" id="wav_name" name="wav_name">
-                <button type="submit" class="layui-btn layui-btn-danger" lay-submit lay-filter="submit" data-cn="立即识别"
-                        data-en="Start Separate"></button>
-                <span class="worktype">on {{ devtype.upper()}}</span>
-            </div>
-            <div class="layui-label-text layui-font-12 my-1 layui-font-gray"
-                 data-en="The recognition of base to large-v3 models is becoming increasingly accurate, but it also consumes more resources. If you do not have the CUDA acceleration environment, do not choose large series models"
-                 data-cn="base到large-v3模型识别越来越精确，但也更消耗资源，如果不具备CUDA加速环境，请勿选用large系模型"></div>
+          <div class="layui-form-item layui-form-block">
+            <input type="hidden" id="wav_name" name="wav_name" />
+            <button
+              type="submit"
+              class="layui-btn layui-btn-danger"
+              lay-submit
+              lay-filter="submit"
+              data-cn="立即识别（{{ devtype.upper()}}）"
+              data-en="Start Separate ({{ devtype.upper()}})"
+              id="submit-btn"
+            >
+              <i
+                style="display: none"
+                class="layui-icon-loading layui-icon layui-anim layui-anim-rotate layui-anim-loop"
+              ></i>
+            </button>
+            <div
+              class="layui-btn layui-btn-disabled"
+              data-cn="导出文本"
+              data-en="Export Text"
+              id="export-btn"
+            ></div>
+          </div>
         </form>
-        <div id="progressbar" class="layui-progress layui-hide" lay-filter="progressbar">
+        <!-- <div
+          id="progressbar"
+          class="layui-progress layui-hide"
+          lay-filter="progressbar"
+        >
           <div class="layui-progress-bar" lay-showpercent></div>
-        </div>
+        </div> -->
 
-        <div class="layui-card ">
-            <div class="layui-card-body" style="padding:10px 0">
-                <div id="haoshi"></div>
-                <textarea placeholder-cn="识别结果在此显示" placeholder-en="Result list in here" class="layui-textarea" id="result" readonly cols="30" rows="10"></textarea>
-                <div >
-                <a id="download_btn" href="javascript:;" onclick="download_act(this)" class="layui-btn layui-btn-small layui-hide" data-en="Download" data-cn="下载结果"></a>
-                </div>
-            </div>
+        <div class="layui-card">
+          <div class="layui-card-body text-contain" style="padding: 10px 0">
+            <textarea
+              placeholder-cn="识别结果在此显示"
+              placeholder-en="Result list in here"
+              class="layui-textarea"
+              id="result"
+              readonly
+              cols="30"
+              rows="10"
+            ></textarea>
+          </div>
         </div>
+      </div>
     </div>
-</div>
 
-<script src="/static/layui/layui.js"></script>
-<script>
-    let language = '{{ language }}';
-    window.$ = layui.$;
-    window.download_type="txt"
-    let intervalId=null;
-    if (language === 'zh') {
+    <script src="/static/layui/layui.js"></script>
+    <script>
+      let language = "{{ language }}";
+      window.$ = layui.$;
+      let intervalId = null;
+      if (language === "zh") {
         $("[data-cn]").each(function () {
-            $(this).html($(this).attr('data-cn'));
-
+          $(this).html($(this).html() + $(this).attr("data-cn"));
         });
         $("[placeholder-cn]").each(function () {
-            $(this).attr('placeholder',$(this).attr('placeholder-cn'));
+          $(this).attr("placeholder", $(this).attr("placeholder-cn"));
         });
-    } else {
+      } else {
         $("[data-en]").each(function () {
-            $(this).html($(this).attr('data-en'));
+          $(this).html($(this).html() + $(this).attr("data-en"));
         });
         $("[placeholder-en]").each(function () {
-            $(this).attr('placeholder',$(this).attr('placeholder-en'));
+          $(this).attr("placeholder", $(this).attr("placeholder-en"));
         });
-    }
-    //JS
-    layui.use(function () {
+      }
+      /** 即将要处理的文件信息 */
+      var pending_files = [];
+
+      var processing = false;
+      function get_file_el(file_name) {
+        return $(`.flex[name="${file_name}"]`);
+      }
+      function set_status(file_name, status, color) {
+        var file_element = get_file_el(file_name);
+        file_element.find(".status").html(status).show().css("color", color);
+      }
+
+      var getprogress = function (file_name, field, star_time) {
+        var file_element = get_file_el(file_name);
+        var done = null;
+        var handler = function () {
+          $.post("/progressbar", field, function (res) {
+            if (res.code !== 0) {
+              done({
+                error: res.msg,
+                file_name,
+              });
+              set_status(file_name, res.msg, "#ff5722");
+            }
+            const percentage = `${(res["data"] * 100).toFixed(2)}%`;
+            set_status(file_name, percentage, "#16b777");
+            if (res["data"] >= 1) {
+              var sec = +new Date() - star_time;
+              set_status(
+                file_name,
+                `100%     ${(sec / 1000).toFixed(2)} sec`,
+                "#16b777"
+              );
+              if (done) {
+                done({
+                  res,
+                  file_name,
+                });
+              }
+              return;
+            }
+            setTimeout(() => {
+              handler();
+            }, 500);
+          }).fail(function () {
+            setTimeout(() => {
+              handler();
+            }, 500);
+          });
+        };
+        handler();
+        return {
+          done: function (cb) {
+            done = cb;
+          },
+        };
+      };
+
+      function process(file, field) {
+        return new Promise(function (resolve) {
+          set_status(file.data, "0%", "#16b777");
+
+          $.post("/process", field, function (res) {
+            if (res.code !== 0) {
+              resolve({
+                error: res.msg,
+                file_name: file.data,
+              });
+              set_status(file.data, res.msg, "#ff5722");
+              return;
+            }
+            getprogress(file.data, field, +new Date()).done(function (res) {
+              resolve(res);
+            });
+          }).fail(function (msg) {
+            set_status(file.data, msg.statusText, "#ff5722");
+            resolve({
+              error: msg.statusText,
+              file_name: file.data,
+            });
+          });
+        });
+      }
+
+      function process_loading() {
+        return {
+          start: function () {
+            processing = true;
+            $("#submit-btn").addClass("layui-btn-disabled").find("i").show();
+          },
+          end: function () {
+            processing = false;
+            $("#submit-btn").removeClass("layui-btn-disabled").find("i").hide();
+          },
+        };
+      }
+
+      //JS
+      layui.use(function () {
         var element = layui.element;
         var layer = layui.layer;
 
@@ -196,124 +388,169 @@
         // 渲染
         let layindex1 = null;
         upload.render({
-            elem: '#upload',
-            field: "audio",
-            accept: "file",
-            exts: 'mp4|mp3|flac|wav|avi|mkv|mpeg|mov',
-            url: '/upload', // 实际使用时改成您自己的上传接口即可。
-            choose: function () {
-                layindex1 = layer.load();
-            },
-            done: function (res) {
-                $('#preview').removeClass('layui-hide').html(`
-                    <hr><div class="flex">
-                        <span class="name">${res.msg} ${res.data}</span>
-                        <audio src="/static/tmp/${res.data}" controls></audio>
-                    </div>
-                `);
-                $('#wav_name').val(res.data);
-                console.log(res);
-                layer.close(layindex1);
-            },
-            error: function () {
-                layer.close(layindex1);
+          elem: "#upload",
+          field: "audio",
+          accept: "file",
+          exts: "mp4|mp3|flac|wav|avi|mkv|mpeg|mov",
+          multiple: true,
+          url: "/upload", // 实际使用时改成您自己的上传接口即可。
+          choose: function () {
+            pending_files = [];
+          },
+          before: function () {
+            if (processing) {
+              return false;
             }
+          },
+          done: function (res) {
+            pending_files.push(res);
+            /* $('#wav_name').val(res.data); */
+            console.log(res);
+          },
+          allDone: function () {
+            const file_element = pending_files.reduce((prev, cur) => {
+              return `${prev}
+                    <div class="flex" name="${cur.data}">
+                        <span class="name">${cur.msg} ${cur.data || ""}</span>
+                        <audio src="/static/tmp/${cur.data}" controls></audio>
+                        <div class="status"></div>
+                    </div>
+                    `;
+            }, "");
+            $("#preview").removeClass("layui-hide").html(`
+                    <hr>
+                    <div class="preview-scroll">${file_element}</div>
+                `);
+          },
+        });
+        $("#export-btn").click(function () {
+          if ($(this).hasClass("layui-btn-disabled")) {
+            return;
+          }
+          var textElList = $(".text-res");
+          if (!textElList.length) {
+            layer.alert(
+              language === "zh"
+                ? "请先识别后再进行导出!"
+                : "Please process first before exporting!",
+              { title: false }
+            );
+            return;
+          }
+          var exportInfos = [...textElList]
+            .map(function (el) {
+              var info = {
+                title: $(el).find(".text-res-file").text(),
+                text: $(el).find("textarea").val(),
+              };
+              return `${info.text}`;
+            })
+            .join("\n\n\n");
+          var blob = new Blob([exportInfos], {
+            type: 'text/plain'
+          })
+          var url = URL.createObjectURL(blob)
+          var aEl = document.createElement('a')
+          aEl.href = url
+          aEl.target = '_blank'
+          aEl.download = '音频文本.txt'
+          aEl.click()
+          aEl.remove()
+          URL.revokeObjectURL(url)
         });
         // 提交事件
-        form.on('submit(submit)', function (data) {
-            $('#progressbar').removeClass('layui-hide');
-            var field = data.field; // 获取表单全部字段值
-            if (!field['wav_name']) {
-                layer.alert(language === 'zh' ? '必须先上传要识别的音频或视频文件!' : 'The file to be recognition must be uploaded first!', {title: false})
-                return false;
+        form.on("submit(submit)", function (data) {
+          if (processing) {
+            return;
+          }
+          var field = data.field; // 获取表单全部字段值
+          if (!pending_files.length) {
+            layer.alert(
+              language === "zh"
+                ? "必须先上传要识别的音频或视频文件!"
+                : "The file to be recognition must be uploaded first!",
+              { title: false }
+            );
+            return false;
+          }
+          process_loading().start();
+          $("#export-btn").addClass("layui-btn-disabled");
+          $(".text-contain").html(`
+          <textarea
+              placeholder="${
+                language === "zh" ? "识别结果在此显示" : "Result list in here"
+              }"
+              class="layui-textarea res-placeholder"
+              id="result"
+              readonly
+              cols="30"
+              rows="10"
+            ></textarea>
+          `);
+          function getText(res) {
+            try {
+              if (typeof res === "string") {
+                return res;
+              }
+              return JSON.stringify(res);
+            } catch (e) {
+              return res;
             }
-            layindex1 = layer.load();
-            let t=(new Date).getTime();
-            let getprogress=function(){
-                    window.download_type="";
-                    $('result').val('');
-                    $('#download_btn').addClass('layui-hide');
-                    $.post('/progressbar',field, function (res) {
-                            if (res.code !== 0) {
-                                layer.close(layindex1)
-                                return layer.alert(res.msg, {title: false})
-                            }
-                            element.progress('progressbar', `${res['data']*100}%`);                            let hs=parseInt( ((new Date).getTime()-t )/1000 );
-                            $("#haoshi").text(`${hs} sec`);
-                            if(res['data']>=1){
-                                if(res['result']){
-                                    try{
-                                        $("#result").val(field['data_type'] === 'json' ? JSON.stringify(res.result) : res.result)
-                                    }catch(e){
-                                        $("#result").val(res.result)
-                                    }
-                                    $("#result").removeAttr('readonly');
-                                    $('#progressbar').addClass('layui-hide');
-                                    window.download_type=field['data_type'];
-                                    $('#download_btn').removeClass('layui-hide');
-                                }
-                                layer.close(layindex1);
-                                return;                
-                            }
-                            setTimeout(()=>{
-                                getprogress();
-                            }, 500);
-                    });
-            }            
-            $.post('/process', field, function (res) {
-                $("#haoshi").text('')
-                if (res.code !== 0) {
-                    layer.close(layindex1)
-                    return layer.alert(res.msg, {title: false})
-                }
-                getprogress();
-            });
-            return false; // 阻止默认 form 跳转
+          }
+          Promise.allSettled(
+            pending_files.map(function (file) {
+              return process(file, {
+                ...field,
+                wav_name: file.data,
+              }).then(function (res) {
+                $('.res-placeholder').hide()
+                $("#export-btn").removeClass("layui-btn-disabled");
+                var texts_el = document.createElement("div");
+                texts_el.className = "text-res";
+                $(texts_el).html(
+                  `<div class="text-res-file">${res.file_name}</div>
+                    <textarea
+                        name="${res.file_name}"
+                        class="layui-textarea"
+                        cols="30"
+                        rows="10"
+                    ></textarea>`
+                );
+                $(".text-contain").append(texts_el);
+                $(texts_el).find('textarea').val(getText(res.res.result));
+              });
+            })
+          ).finally(function () {
+            process_loading().end();
+          });
+          return false; // 阻止默认 form 跳转
         });
         setTimeout(() => {
-            $.get('/checkupdate', function (res) {
-                if (res.code === 0 && res.msg) {
-                    $('#checkupdate').removeClass('layui-hide');
-                    $('#checkupdate a').text(res.msg);
-                }
-            });
+          $.get("/checkupdate", function (res) {
+            if (res.code === 0 && res.msg) {
+              $("#checkupdate").removeClass("layui-hide");
+              $("#checkupdate a").text(res.msg);
+            }
+          });
         }, 60000);
+      });
 
-    });
-    
-    function download_act() {
-      if(!window.download_type){
-          return;
-      }  
-      let type=window.download_type=='text'?'txt':window.download_type
-      var text = document.getElementById("result").value;
-        var blob = new Blob([text], {type: "text/plain;charset=utf-8"});
-        var url = URL.createObjectURL(blob);
-        
-        var element = document.createElement('a');
-        element.setAttribute('href', url);
-        element.setAttribute('download', "result."+type);
-        element.style.display = 'none';
-        document.body.appendChild(element);
-        element.click();
-        document.body.removeChild(element);
-        URL.revokeObjectURL(url);
-
-    }
-    
-    function showjz(el){
-        let lag=language === 'zh'?'如果项目对你有帮助，节省了时间和金钱，请考虑小额资助开发者，帮助项目能够长期保持更新和维护。':'If the project is helpful to you, saving time and money, please consider providing small funding to developers help the project can be updated and maintained for a long time';
+      function showjz(el) {
+        let lag =
+          language === "zh"
+            ? "如果项目对你有帮助，节省了时间和金钱，请考虑小额资助开发者，帮助项目能够长期保持更新和维护。"
+            : "If the project is helpful to you, saving time and money, please consider providing small funding to developers help the project can be updated and maintained for a long time";
         layui.layer.open({
           type: 1, // page 层类型
-          area: ['300px', '450px'],
+          area: ["300px", "450px"],
           title: false,
           shade: 0.6, // 遮罩透明度
           shadeClose: true, // 点击遮罩区域，关闭弹层
           maxmin: true, // 允许全屏最小化
           anim: 0, // 0-6 的动画形式，-1 不开启
-          content: `<div style="padding: 10px; "><div class="fs-6 text-black-500">${lag}</div><img src="/static/images/wx.png" width="200px" style="display:block;margin:10px auto;"><img src="/static/images/alipay.png" width="200px" style="display:block;margin:10px auto"></div>`
+          content: `<div style="padding: 10px; "><div class="fs-6 text-black-500">${lag}</div><img src="/static/images/wx.png" width="200px" style="display:block;margin:10px auto;"><img src="/static/images/alipay.png" width="200px" style="display:block;margin:10px auto"></div>`,
         });
-    }
-</script>
-</body>
+      }
+    </script>
+  </body>
 </html>
