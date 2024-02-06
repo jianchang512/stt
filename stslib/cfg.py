@@ -81,6 +81,7 @@ language_code_list={
         "越南语": ['vi'],
         "阿拉伯语": ['ar'],
         "土耳其语": ['tr'],
+        "匈牙利": ['hu'],
     },
     "en":{
         "Chinese": ['zh'],
@@ -97,6 +98,7 @@ language_code_list={
         "Vietnamese": ['vi'],
         "Arabic": ['ar'],
         "Turkish": ['tr'],
+        "Hungarian": ['hu'],
     }
 }
 
