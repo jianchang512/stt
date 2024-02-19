@@ -101,10 +101,11 @@ def upload():
 
 def shibie(*, wav_name=None, model=None, language=None, data_type=None, wav_file=None, key=None):
     try:
-        sets=cfg.parse_ini()       
+        sets=cfg.parse_ini()
+        print(f'{sets.get("initial_prompt_zh")}')
         modelobj = WhisperModel(model, device=sets.get('devtype'), compute_type=sets.get('cuda_com_type'), download_root=cfg.ROOT_DIR + "/models", local_files_only=True)
         cfg.progressbar[key]=0
-        segments,info = modelobj.transcribe(wav_file,  beam_size=sets.get('beam_size'),best_of=sets.get('best_of'),temperature=0 if sets.get('temperature')==0 else [0.0,0.2,0.4,0.6,0.8,1.0],condition_on_previous_text=sets.get('condition_on_previous_text'),vad_filter=sets.get('vad'),  vad_parameters=dict(min_silence_duration_ms=500),language=language)
+        segments,info = modelobj.transcribe(wav_file,  beam_size=sets.get('beam_size'),best_of=sets.get('best_of'),temperature=0 if sets.get('temperature')==0 else [0.0,0.2,0.4,0.6,0.8,1.0],condition_on_previous_text=sets.get('condition_on_previous_text'),vad_filter=sets.get('vad'),  vad_parameters=dict(min_silence_duration_ms=300),language=language, initial_prompt=None if language!='zh' else sets.get('initial_prompt_zh'))
         total_duration = round(info.duration, 2)  # Same precision as the Whisper timestamps.
 
         raw_subtitles = []
@@ -226,7 +227,7 @@ def api():
         model = WhisperModel(model, device=sets.get('devtype'), compute_type=sets.get('cuda_com_type'), download_root=cfg.ROOT_DIR + "/models", local_files_only=True)
 
         segments,_ = model.transcribe(wav_file, beam_size=sets.get('beam_size'),best_of=sets.get('best_of'),temperature=0 if sets.get('temperature')==0 else [0.0,0.2,0.4,0.6,0.8,1.0],condition_on_previous_text=sets.get('condition_on_previous_text'),vad_filter=sets.get('vad'),
-    vad_parameters=dict(min_silence_duration_ms=500),language=language)
+    vad_parameters=dict(min_silence_duration_ms=300,max_speech_duration_s=10.5),language=language,initial_prompt=None if language!='zh' else sets.get('initial_prompt_zh'))
         raw_subtitles = []
         for  segment in segments:
             start = int(segment.start * 1000)

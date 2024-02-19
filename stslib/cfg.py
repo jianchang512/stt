@@ -15,7 +15,8 @@ def parse_ini(file=os.path.join(ROOT_DIR,'set.ini')):
         "best_of":1,
         "vad":True,
         "temperature":0,
-        "condition_on_previous_text":False
+        "condition_on_previous_text":False,
+        "initial_prompt_zh":"转录为中文简体。"
 
     }
     if not os.path.exists(file):
