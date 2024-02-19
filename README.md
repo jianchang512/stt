@@ -156,7 +156,7 @@ Api 请求示例
 
 [声音克隆工具:用任意音色合成语音](https://github.com/jianchang512/clone-voice)
 
-[人声背景乐分离:极简的人声和背景音乐分离工具，本地化网页操作](https://github.com/jianchang512/stt)
+[人声背景乐分离:极简的人声和背景音乐分离工具，本地化网页操作](https://github.com/jianchang512/vocal-separate)
 
 # 致谢
 
