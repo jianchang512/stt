@@ -1,4 +1,4 @@
-[English](./README_EN.md) / [捐助本项目](https://github.com/jianchang512/pyvideotrans/blob/main/about.md) / [Discord](https://discord.gg/TMCM2PfHzQ) / Q群 608815898
+[English](./README_EN.md) / [捐助本项目](https://github.com/jianchang512/pyvideotrans/blob/main/about.md) / [Discord](https://discord.gg/TMCM2PfHzQ) / Q群 905581228
 
 # 语音识别转文字工具
 
