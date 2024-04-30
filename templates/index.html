@@ -180,7 +180,7 @@
               data-en="Return to text format"
             ></label>
             <div class="layui-input-inline">
-              <select name="data_type">
+              <select id="data_type" name="data_type">
                 <option
                   value="srt"
                   data-cn="srt字幕格式"
@@ -191,6 +191,23 @@
               </select>
             </div>
           </div>
+
+          <!-- 自动导出开关 -->
+          <div class="layui-form-item layui-inline">
+            <label
+              class="layui-form-label"
+              style="width: auto"
+              data-cn="自动导出开关"
+              data-en="Return to text format"
+            ></label>
+            <div class="layui-input-inline">
+              <select id="switch" name="switch">
+                <option value="off" data-cn="关闭" data-en="OFF"></option>
+                <option value="on" data-cn="开启" data-en="ON"></option>
+              </select>
+            </div>
+          </div>
+
           <div
             class="layui-label-text layui-font-12 my-1 layui-font-gray"
             data-en="The recognition of base to large-v3 models is becoming increasingly accurate, but it also consumes more resources. If you do not have the CUDA acceleration environment, do not choose large series models"
@@ -423,6 +440,7 @@
                 `);
           },
         });
+        // 导出文本
         $("#export-btn").click(function () {
           if ($(this).hasClass("layui-btn-disabled")) {
             return;
@@ -437,29 +455,29 @@
             );
             return;
           }
-          var exportInfos = [...textElList]
-            .map(function (el) {
-              var info = {
-                title: $(el).find(".text-res-file").text(),
-                text: $(el).find("textarea").val(),
-              };
-              return `${info.text}`;
-            })
-            .join("\n\n\n");
-          var blob = new Blob([exportInfos], {
-            type: 'text/plain'
-          })
-          var url = URL.createObjectURL(blob)
-          var aEl = document.createElement('a')
-          aEl.href = url
-          aEl.target = '_blank'
-          aEl.download = '音频文本.txt'
-          aEl.click()
-          aEl.remove()
-          URL.revokeObjectURL(url)
+
+          // TODO:合并导出 / 分开文件导出
+          textElList.forEach((el) => {
+            var title = $(el).find(".text-res-file").text();
+            var text = $(el).find("textarea").val();
+            var file_type = $("#data_type").val();
+
+            var blob = new Blob([text], {
+              type: "text/plain",
+            });
+            var url = URL.createObjectURL(blob);
+            var aEl = document.createElement("a");
+            aEl.href = url;
+            aEl.target = "_blank";
+            aEl.download = `${title}.${file_type}`;
+            aEl.click();
+            aEl.remove();
+            URL.revokeObjectURL(url);
+          });
         });
         // 提交事件
         form.on("submit(submit)", function (data) {
+          console.log('submit', data)
           if (processing) {
             return;
           }
@@ -473,7 +491,9 @@
             );
             return false;
           }
+          // 开始识别
           process_loading().start();
+          // 按钮禁用
           $("#export-btn").addClass("layui-btn-disabled");
           $(".text-contain").html(`
           <textarea
@@ -497,14 +517,33 @@
               return res;
             }
           }
+          // 导出
+          function exportText(title, text) {
+            var file_type = $("#data_type").val();
+            var srt_title = title.replace('wav', file_type)
+            var blob = new Blob([text], {
+              type: "text/plain",
+            });
+            var url = URL.createObjectURL(blob);
+            var aEl = document.createElement("a");
+            aEl.href = url;
+            aEl.target = "_blank";
+            aEl.download = srt_title;
+            aEl.click();
+            aEl.remove();
+            URL.revokeObjectURL(url);
+          }
+          // 批量处理文件
           Promise.allSettled(
             pending_files.map(function (file) {
               return process(file, {
                 ...field,
                 wav_name: file.data,
               }).then(function (res) {
-                $('.res-placeholder').hide()
+                // 识别结果文本区域以及导出避免误操作
+                $(".res-placeholder").hide();
                 $("#export-btn").removeClass("layui-btn-disabled");
+                // 文件名显示
                 var texts_el = document.createElement("div");
                 texts_el.className = "text-res";
                 $(texts_el).html(
@@ -517,10 +556,19 @@
                     ></textarea>`
                 );
                 $(".text-contain").append(texts_el);
-                $(texts_el).find('textarea').val(getText(res.res.result));
+                $(texts_el).find("textarea").val(getText(res.res.result));
+                // TODO: 自动导出
+                if (field.switch === "on") {
+                  console.log("处理结果-", {
+                    file_name: res.file_name,
+                    result: getText(res.res.result),
+                  });
+                  exportText(res.file_name, getText(res.res.result))
+                }
               });
             })
           ).finally(function () {
+            // 识别按钮解禁
             process_loading().end();
           });
           return false; // 阻止默认 form 跳转
