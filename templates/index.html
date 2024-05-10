@@ -456,7 +456,6 @@
             return;
           }
 
-          // TODO:合并导出 / 分开文件导出
           textElList.forEach((el) => {
             var title = $(el).find(".text-res-file").text();
             var text = $(el).find("textarea").val();
@@ -557,12 +556,8 @@
                 );
                 $(".text-contain").append(texts_el);
                 $(texts_el).find("textarea").val(getText(res.res.result));
-                // TODO: 自动导出
+                // 自动导出
                 if (field.switch === "on") {
-                  console.log("处理结果-", {
-                    file_name: res.file_name,
-                    result: getText(res.res.result),
-                  });
                   exportText(res.file_name, getText(res.res.result))
                 }
               });
