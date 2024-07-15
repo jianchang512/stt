@@ -11,6 +11,7 @@
       .preview-scroll {
         max-height: 450px;
         overflow: auto;
+		color:#000;
       }
       .flex {
         display: flex;
@@ -68,9 +69,9 @@
       }
 
       #content {
-        width: 80%;
+        width: 95%;
         min-width: 800px;
-        max-width: 1400px;
+        max-width: 2000px;
         margin: 75px auto 50px;
       }
 
@@ -89,11 +90,20 @@
         width: 200px;
         white-space: break-spaces;
       }
+	  .d-flex, .d-flex > div{
+		display:flex;
+		align-items:center;
+		justify-content:center
+	  }
+	  .layui-form-label{
+		width:auto;
+		padding:5px;
+	  }
     </style>
   </head>
   <body>
     <div class="layui-layout layui-layout-admin">
-      <div class="layui-header" style="background: #16b777">
+      <div class="layui-header" style="background: #16b777;z-index:1">
         <div
           class="layui-logo layui-hide-xs"
           style="color: #fff"
@@ -134,14 +144,6 @@
               data-en="Download models"
             ></a>
           </li>
-          <li class="layui-nav-item layui-hide-xs">
-            <a
-              href="javascript:;"
-              onclick="showjz(this)"
-              data-cn="捐助本项目"
-              data-en="Donate the project models"
-            ></a>
-          </li>
         </ul>
       </div>
       <div id="content">
@@ -156,15 +158,16 @@
             <div class="preview-scroll"></div>
           </div>
         </div>
-        <form class="layui-form text-center">
-          <div class="layui-form-item layui-inline">
+        <form class="layui-form text-center layui-form-pane">
+		<div class="d-flex">
+          <div class="layui-form-item">
             <label
               class="layui-form-label"
-              style="width: auto"
-              data-cn="选择发音语言"
-              data-en="Choose Pronunciation Language"
+              
+              data-cn="发音语言"
+              data-en="Pronunciation Language"
             ></label>
-            <div class="layui-input-inline">
+            <div class="">
               <select name="language">
                 {% for name,val in lang_code.items() %}
                 <option value="{{ val[0] }}">{{ name }}</option>
@@ -172,19 +175,40 @@
               </select>
             </div>
           </div>
-          <div class="layui-form-item layui-inline">
+		  <div class="layui-form-item">
             <label
               class="layui-form-label"
-              style="width: auto"
-              data-cn="返回文字格式"
-              data-en="Return to text format"
+              
+              data-cn="选择模型"
+              data-en="Select model"
             ></label>
-            <div class="layui-input-inline">
+            <div class="">
+              <select name="model">
+                <option value="tiny">tiny</option>
+                <option value="tiny.en">tiny.en</option>
+                <option selected value="base">base</option>
+                <option value="base.en">base.en</option>
+                <option value="small.en">small.en</option>
+                <option value="medium.en">medium.en</option>
+                <option value="large-v1">large-v1</option>
+                <option value="large-v2">large-v2</option>
+                <option value="large-v3">large-v3</option>
+              </select>
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <label
+              class="layui-form-label"
+              
+              data-cn="返回格式"
+              data-en="Return format"
+            ></label>
+            <div class="">
               <select id="data_type" name="data_type">
                 <option
                   value="srt"
-                  data-cn="srt字幕格式"
-                  data-en="Subtitles srt files"
+                  data-cn="srt字幕"
+                  data-en="Subtitles srt"
                 ></option>
                 <option value="json">json</option>
                 <option value="text" data-cn="纯文字" data-en="text"></option>
@@ -193,14 +217,14 @@
           </div>
 
           <!-- 自动导出开关 -->
-          <div class="layui-form-item layui-inline">
+          <div class="layui-form-item">
             <label
               class="layui-form-label"
-              style="width: auto"
-              data-cn="自动导出开关"
-              data-en="Return to text format"
+              
+              data-cn="自动导出"
+              data-en="Auto Export"
             ></label>
-            <div class="layui-input-inline">
+            <div class="">
               <select id="switch" name="switch">
                 <option value="off" data-cn="关闭" data-en="OFF"></option>
                 <option value="on" data-cn="开启" data-en="ON"></option>
@@ -209,42 +233,27 @@
           </div>
 
           <!-- 是否独立导出 -->
-          <div class="layui-form-item layui-inline">
+          <div class="layui-form-item">
             <label
               class="layui-form-label"
-              style="width: auto"
-              data-cn="是否独立导出"
-              data-en="Return to text format"
+              
+              data-cn="独立导出"
+              data-en="Individual export"
             ></label>
-            <div class="layui-input-inline">
+            <div class="">
               <select id="isIndependent" name="isIndependent">
                 <option value="off" data-cn="否" data-en="OFF"></option>
                 <option value="on" data-cn="是" data-en="ON"></option>
               </select>
             </div>
           </div>
-
+	</div>
           <div
-            class="layui-label-text layui-font-12 my-1 layui-font-gray"
-            data-en="The recognition of base to large-v3 models is becoming increasingly accurate, but it also consumes more resources. If you do not have the CUDA acceleration environment, do not choose large series models"
-            data-cn="base到large-v3模型识别越来越精确，但也更消耗资源，如果不具备CUDA加速环境，请勿选用large系模型"
+            class="layui-label-text layui-font-12 my-1 "
+            data-en="The recognition of tiny to large-v3 models is becoming increasingly accurate, but it also consumes more resources. If you do not have the CUDA acceleration environment, do not choose large series models"
+            data-cn="tiny到large-v3模型识别越来越精确，但也更消耗资源，如果不具备CUDA加速环境，请勿选用large系模型"
           ></div>
-          <div class="layui-form-item layui-inline">
-            <label
-              class="layui-form-label"
-              style="width: auto"
-              data-cn="选择要使用的模型"
-              data-en="Select model"
-            ></label>
-            <div class="layui-input-inline">
-              <select name="model">
-                <option value="base">base</option>
-                <option value="small">small</option>
-                <option value="medium">medium</option>
-                <option value="large-v3">large-v3</option>
-              </select>
-            </div>
-          </div>
+          
 
           <div class="layui-form-item layui-form-block">
             <input type="hidden" id="wav_name" name="wav_name" />
@@ -270,13 +279,7 @@
             ></div>
           </div>
         </form>
-        <!-- <div
-          id="progressbar"
-          class="layui-progress layui-hide"
-          lay-filter="progressbar"
-        >
-          <div class="layui-progress-bar" lay-showpercent></div>
-        </div> -->
+		
 
         <div class="layui-card">
           <div class="layui-card-body text-contain" style="padding: 10px 0">
@@ -376,25 +379,32 @@
         return new Promise(function (resolve) {
           set_status(file.data, "0%", "#16b777");
 
-          $.post("/process", field, function (res) {
-            if (res.code !== 0) {
-              resolve({
-                error: res.msg,
-                file_name: file.data,
-              });
-              set_status(file.data, res.msg, "#ff5722");
-              return;
-            }
-            getprogress(file.data, field, +new Date()).done(function (res) {
-              resolve(res);
-            });
-          }).fail(function (msg) {
-            set_status(file.data, msg.statusText, "#ff5722");
-            resolve({
-              error: msg.statusText,
-              file_name: file.data,
-            });
-          });
+			$.ajax({
+				url:"/process", 
+				method:"POST",
+				data:field, 
+				timeout:3600000,
+				success:function (res) {
+					if (res.code !== 0) {
+					  resolve({
+						error: res.msg,
+						file_name: file.data,
+					  });
+					  set_status(file.data, res.msg, "#ff5722");
+					  return;
+					}
+					getprogress(file.data, field, +new Date()).done(function (res) {
+					  resolve(res);
+					});
+				},
+				error:function (msg) {
+					set_status(file.data, msg.statusText, "#ff5722");
+					resolve({
+					  error: msg.statusText,
+					  file_name: file.data,
+					});
+				}
+			});
         });
       }
 
@@ -434,6 +444,8 @@
             if (processing) {
               return false;
             }
+			
+			layindex1=layer.load();
           },
           done: function (res) {
             pending_files.push(res);
@@ -441,6 +453,7 @@
             console.log(res);
           },
           allDone: function () {
+			layer.close(layindex1)
             const file_element = pending_files.reduce((prev, cur) => {
               return `${prev}
                     <div class="flex" name="${cur.data}">
@@ -454,6 +467,7 @@
                     <hr>
                     <div class="preview-scroll">${file_element}</div>
                 `);
+			layer.msg(language === "zh"?'上传完成，可以点击开始识别了':'The upload is complete and you can click on Start Recognizing')
           },
         });
         // 导出
@@ -536,6 +550,15 @@
             );
             return false;
           }
+		  if(field['model'].endsWith('.en') && field['language']!='en'){
+			layer.alert(
+              language === "zh"
+                ? "en结尾的模型只可用于英语文字识别!"
+                : "Models ending in en can only be used for English text recognition!",
+              { title: false }
+            );
+            return false;
+		  }
           // 开始识别
           process_loading().start();
           // 按钮禁用
@@ -608,22 +631,7 @@
         }, 60000);
       });
 
-      function showjz(el) {
-        let lag =
-          language === "zh"
-            ? "如果项目对你有帮助，节省了时间和金钱，请考虑小额资助开发者，帮助项目能够长期保持更新和维护。"
-            : "If the project is helpful to you, saving time and money, please consider providing small funding to developers help the project can be updated and maintained for a long time";
-        layui.layer.open({
-          type: 1, // page 层类型
-          area: ["300px", "450px"],
-          title: false,
-          shade: 0.6, // 遮罩透明度
-          shadeClose: true, // 点击遮罩区域，关闭弹层
-          maxmin: true, // 允许全屏最小化
-          anim: 0, // 0-6 的动画形式，-1 不开启
-          content: `<div style="padding: 10px; "><div class="fs-6 text-black-500">${lag}</div><img src="/static/images/wx.png" width="200px" style="display:block;margin:10px auto;"><img src="/static/images/alipay.png" width="200px" style="display:block;margin:10px auto"></div>`,
-        });
-      }
+
     </script>
   </body>
 </html>

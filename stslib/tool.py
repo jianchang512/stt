@@ -51,8 +51,11 @@ def checkupdate():
         pass
 
 def openweb(web_address):
-    webbrowser.open("http://"+web_address)
-    print(f"\n{cfg.transobj['lang8']} http://{web_address}")
+    try:
+        webbrowser.open("http://"+web_address)
+        print(f"\n{cfg.transobj['lang8']} http://{web_address}")
+    except Exception:
+        pass
 
 def ms_to_time_string(*, ms=0, seconds=None):
     # 计算小时、分钟、秒和毫秒

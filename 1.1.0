@@ -1,0 +1,106 @@
+Looking in indexes: https://mirrors.aliyun.com/pypi/simple/
+Collecting funasr
+  Downloading https://mirrors.aliyun.com/pypi/packages/5b/a3/510fb6b7c86648e4ef033c095e5a2e301bf700212c97a771f7458be7747c/funasr-1.1.0-py3-none-any.whl (645 kB)
+     ------------------------------------ 645.2/645.2 kB 272.8 kB/s eta 0:00:00
+Collecting scipy>=1.4.1 (from funasr)
+  Using cached https://mirrors.aliyun.com/pypi/packages/a3/0c/82c1330c08f31d61142d38cb9a185e01c2403c990d10dab208032e62d0fa/scipy-1.14.0-cp310-cp310-win_amd64.whl (44.8 MB)
+Collecting librosa (from funasr)
+  Using cached https://mirrors.aliyun.com/pypi/packages/8c/8a/2d231b35456506b7c98b3ab9bbf07917b205fed8615d2e59e976ab497fff/librosa-0.10.2.post1-py3-none-any.whl (260 kB)
+Collecting jamo (from funasr)
+  Using cached https://mirrors.aliyun.com/pypi/packages/ac/cc/49812faae67f9a24be6ddaf58a2cf7e8c3cbfcf5b762d9414f7103d2ea2c/jamo-0.4.1-py3-none-any.whl (9.5 kB)
+Collecting PyYAML>=5.1.2 (from funasr)
+  Downloading https://mirrors.aliyun.com/pypi/packages/24/97/9b59b43431f98d01806b288532da38099cc6f2fea0f3d712e21e269c0279/PyYAML-6.0.1-cp310-cp310-win_amd64.whl (145 kB)
+     ------------------------------------ 145.3/145.3 kB 216.2 kB/s eta 0:00:00
+Collecting soundfile>=0.12.1 (from funasr)
+  Using cached https://mirrors.aliyun.com/pypi/packages/50/ff/26a4ee48d0b66625a4e4028a055b9f25bc9d7c7b2d17d21a45137621a50d/soundfile-0.12.1-py2.py3-none-win_amd64.whl (1.0 MB)
+Collecting kaldiio>=2.17.0 (from funasr)
+  Using cached https://mirrors.aliyun.com/pypi/packages/6c/32/4fa7c71123f49866b09d462ccdb6bcdfac42e4062a5e83f28fca16593357/kaldiio-2.18.0-py3-none-any.whl (28 kB)
+Collecting torch-complex (from funasr)
+  Using cached https://mirrors.aliyun.com/pypi/packages/f4/c5/9b4d756a7ada951e9b17dcc636f98ed1073c737ae809b150ef408afb6298/torch_complex-0.4.4-py3-none-any.whl (9.1 kB)
+Collecting sentencepiece (from funasr)
+  Using cached https://mirrors.aliyun.com/pypi/packages/85/f4/4ef1a6e0e9dbd8a60780a91df8b7452ada14cfaa0e17b3b8dfa42cecae18/sentencepiece-0.2.0-cp310-cp310-win_amd64.whl (991 kB)
+Collecting jieba (from funasr)
+  Using cached jieba-0.42.1-py3-none-any.whl
+Collecting rotary-embedding-torch (from funasr)
+  Using cached https://mirrors.aliyun.com/pypi/packages/20/65/4d3e6e5f30023924b7dce78d457b0e1a6550980be397c0dc136d2ebdc03a/rotary_embedding_torch-0.6.4-py3-none-any.whl (5.4 kB)
+Collecting pytorch-wpe (from funasr)
+  Using cached https://mirrors.aliyun.com/pypi/packages/23/de/c47967a11bfe68cb28d2f19e55c7027993c3721eba79813db65d245e4ced/pytorch_wpe-0.0.1-py3-none-any.whl (8.1 kB)
+Collecting editdistance>=0.5.2 (from funasr)
+  Using cached https://mirrors.aliyun.com/pypi/packages/c8/d1/7ec5f5cbb95838d0eff7f980a660c81acd1363d658f2f5d4ceba38877c5a/editdistance-0.8.1-cp310-cp310-win_amd64.whl (79 kB)
+Collecting oss2 (from funasr)
+  Using cached oss2-2.18.6-py3-none-any.whl
+Collecting tqdm (from funasr)
+  Downloading https://mirrors.aliyun.com/pypi/packages/18/eb/fdb7eb9e48b7b02554e1664afd3bd3f117f6b6d6c5881438a0b055554f9b/tqdm-4.66.4-py3-none-any.whl (78 kB)
+     -------------------------------------- 78.3/78.3 kB 174.0 kB/s eta 0:00:00
+Collecting umap-learn (from funasr)
+  Using cached https://mirrors.aliyun.com/pypi/packages/d1/1b/46802a050b1c55d10c4f59fc6afd2b45ac9b4f62b2e12092d3f599286f14/umap_learn-0.5.6-py3-none-any.whl (85 kB)
+Collecting jaconv (from funasr)
+  Using cached jaconv-0.3.4-py3-none-any.whl
+Collecting hydra-core>=1.3.2 (from funasr)
+  Using cached https://mirrors.aliyun.com/pypi/packages/c6/50/e0edd38dcd63fb26a8547f13d28f7a008bc4a3fd4eb4ff030673f22ad41a/hydra_core-1.3.2-py3-none-any.whl (154 kB)
+Collecting tensorboardX (from funasr)
+  Using cached https://mirrors.aliyun.com/pypi/packages/44/71/f3e7c9b2ab67e28c572ab4e9d5fa3499e0d252650f96d8a3a03e26677f53/tensorboardX-2.6.2.2-py2.py3-none-any.whl (101 kB)
+Collecting requests (from funasr)
+  Downloading https://mirrors.aliyun.com/pypi/packages/f9/9b/335f9764261e915ed497fcdeb11df5dfd6f7bf257d4a6a2a686d80da4d54/requests-2.32.3-py3-none-any.whl (64 kB)
+     -------------------------------------- 64.9/64.9 kB 139.9 kB/s eta 0:00:00
+Collecting omegaconf<2.4,>=2.2 (from hydra-core>=1.3.2->funasr)
+  Using cached https://mirrors.aliyun.com/pypi/packages/e3/94/1843518e420fa3ed6919835845df698c7e27e183cb997394e4a670973a65/omegaconf-2.3.0-py3-none-any.whl (79 kB)
+Collecting antlr4-python3-runtime==4.9.* (from hydra-core>=1.3.2->funasr)
+  Using cached antlr4_python3_runtime-4.9.3-py3-none-any.whl
+Collecting packaging (from hydra-core>=1.3.2->funasr)
+  Downloading https://mirrors.aliyun.com/pypi/packages/08/aa/cc0199a5f0ad350994d660967a8efb233fe0416e4639146c089643407ce6/packaging-24.1-py3-none-any.whl (53 kB)
+     -------------------------------------- 54.0/54.0 kB 186.1 kB/s eta 0:00:00
+Collecting numpy (from kaldiio>=2.17.0->funasr)
+  Downloading https://mirrors.aliyun.com/pypi/packages/9c/de/7d17991e0683f84bcfefcf4e3f43da6b37155b9e6a0429942494f044a7ef/numpy-2.0.0-cp310-cp310-win_amd64.whl (16.5 MB)
+     -------------------------------------- 16.5/16.5 MB 241.6 kB/s eta 0:00:00
+Collecting cffi>=1.0 (from soundfile>=0.12.1->funasr)
+  Downloading https://mirrors.aliyun.com/pypi/packages/be/3e/0b197d1bfbf386a90786b251dbf2634a15f2ea3d4e4070e99c7d1c7689cf/cffi-1.16.0-cp310-cp310-win_amd64.whl (181 kB)
+     ------------------------------------ 181.6/181.6 kB 130.6 kB/s eta 0:00:00
+Collecting audioread>=2.1.9 (from librosa->funasr)
+  Using cached https://mirrors.aliyun.com/pypi/packages/57/8d/30aa32745af16af0a9a650115fbe81bde7c610ed5c21b381fca0196f3a7f/audioread-3.0.1-py3-none-any.whl (23 kB)
+Collecting scikit-learn>=0.20.0 (from librosa->funasr)
+  Using cached https://mirrors.aliyun.com/pypi/packages/f1/13/de29b945fb28fc0c24159d3a83f1250c5232c1c9abac12434c7c3447e9cc/scikit_learn-1.5.1-cp310-cp310-win_amd64.whl (11.0 MB)
+Collecting joblib>=0.14 (from librosa->funasr)
+  Using cached https://mirrors.aliyun.com/pypi/packages/91/29/df4b9b42f2be0b623cbd5e2140cafcaa2bef0759a00b7b70104dcfe2fb51/joblib-1.4.2-py3-none-any.whl (301 kB)
+Collecting decorator>=4.3.0 (from librosa->funasr)
+  Using cached https://mirrors.aliyun.com/pypi/packages/d5/50/83c593b07763e1161326b3b8c6686f0f4b0f24d5526546bee538c89837d6/decorator-5.1.1-py3-none-any.whl (9.1 kB)
+Collecting numba>=0.51.0 (from librosa->funasr)
+  Downloading https://mirrors.aliyun.com/pypi/packages/1c/b0/c61a93ca947d12233ff45de506ddbf52af3f752066a0b8be4d27426e16da/numba-0.60.0-cp310-cp310-win_amd64.whl (2.7 MB)
+     ---------------------------------------- 2.7/2.7 MB 226.0 kB/s eta 0:00:00
+Collecting pooch>=1.1 (from librosa->funasr)
+  Using cached https://mirrors.aliyun.com/pypi/packages/a8/87/77cc11c7a9ea9fd05503def69e3d18605852cd0d4b0d3b8f15bbeb3ef1d1/pooch-1.8.2-py3-none-any.whl (64 kB)
+Collecting soxr>=0.3.2 (from librosa->funasr)
+  Using cached https://mirrors.aliyun.com/pypi/packages/3c/e7/89951b917600d02f7389e760696c32b70a80a96301d0a018a70a317e4ecc/soxr-0.3.7-cp310-cp310-win_amd64.whl (184 kB)
+Collecting typing-extensions>=4.1.1 (from librosa->funasr)
+  Downloading https://mirrors.aliyun.com/pypi/packages/26/9f/ad63fc0248c5379346306f8668cda6e2e2e9c95e01216d2b8ffd9ff037d0/typing_extensions-4.12.2-py3-none-any.whl (37 kB)
+Collecting lazy-loader>=0.1 (from librosa->funasr)
+  Using cached https://mirrors.aliyun.com/pypi/packages/83/60/d497a310bde3f01cb805196ac61b7ad6dc5dcf8dce66634dc34364b20b4f/lazy_loader-0.4-py3-none-any.whl (12 kB)
+Collecting msgpack>=1.0 (from librosa->funasr)
+  Using cached https://mirrors.aliyun.com/pypi/packages/21/47/b7217d54e15dbae5492b845364427fa3cb1b0ccb58160b04ba47b551d7d9/msgpack-1.0.8-cp310-cp310-win_amd64.whl (75 kB)
+Collecting crcmod>=1.7 (from oss2->funasr)
+  Using cached crcmod-1.7-cp310-cp310-win_amd64.whl
+Collecting pycryptodome>=3.4.7 (from oss2->funasr)
+  Using cached https://mirrors.aliyun.com/pypi/packages/1f/90/d131c0eb643290230dfa4108b7c2d135122d88b714ad241d77beb4782a76/pycryptodome-3.20.0-cp35-abi3-win_amd64.whl (1.8 MB)
+Collecting aliyun-python-sdk-kms>=2.4.1 (from oss2->funasr)
+  Using cached https://mirrors.aliyun.com/pypi/packages/89/b4/ad457761ca26b18a9b0f534b84fec2df59c5fde62dc7786768e2b0edd702/aliyun_python_sdk_kms-2.16.3-py2.py3-none-any.whl (98 kB)
+Collecting aliyun-python-sdk-core>=2.13.12 (from oss2->funasr)
+  Using cached aliyun_python_sdk_core-2.15.1-py3-none-any.whl
+Collecting six (from oss2->funasr)
+  Using cached https://mirrors.aliyun.com/pypi/packages/d9/5a/e7c31adbe875f2abbb91bd84cf2dc52d792b5a01506781dbcf25c91daf11/six-1.16.0-py2.py3-none-any.whl (11 kB)
+Collecting charset-normalizer<4,>=2 (from requests->funasr)
+  Downloading https://mirrors.aliyun.com/pypi/packages/a2/a0/4af29e22cb5942488cf45630cbdd7cefd908768e69bdd90280842e4e8529/charset_normalizer-3.3.2-cp310-cp310-win_amd64.whl (100 kB)
+     ------------------------------------ 100.3/100.3 kB 230.4 kB/s eta 0:00:00
+Collecting idna<4,>=2.5 (from requests->funasr)
+  Downloading https://mirrors.aliyun.com/pypi/packages/e5/3e/741d8c82801c347547f8a2a06aa57dbb1992be9e948df2ea0eda2c8b79e8/idna-3.7-py3-none-any.whl (66 kB)
+     -------------------------------------- 66.8/66.8 kB 116.7 kB/s eta 0:00:00
+Collecting urllib3<3,>=1.21.1 (from requests->funasr)
+  Downloading https://mirrors.aliyun.com/pypi/packages/ca/1c/89ffc63a9605b583d5df2be791a27bc1a42b7c32bab68d3c8f2f73a98cd4/urllib3-2.2.2-py3-none-any.whl (121 kB)
+     ------------------------------------- 121.4/121.4 kB 97.5 kB/s eta 0:00:00
+Collecting certifi>=2017.4.17 (from requests->funasr)
+  Downloading https://mirrors.aliyun.com/pypi/packages/1c/d5/c84e1a17bf61d4df64ca866a1c9a913874b4e9bdc131ec689a0ad013fb36/certifi-2024.7.4-py3-none-any.whl (162 kB)
+     ------------------------------------ 163.0/163.0 kB 207.8 kB/s eta 0:00:00
+Collecting einops>=0.7 (from rotary-embedding-torch->funasr)
+  Using cached https://mirrors.aliyun.com/pypi/packages/44/5a/f0b9ad6c0a9017e62d4735daaeb11ba3b6c009d69a26141b258cd37b5588/einops-0.8.0-py3-none-any.whl (43 kB)
+Collecting torch>=2.0 (from rotary-embedding-torch->funasr)
+  Downloading https://mirrors.aliyun.com/pypi/packages/85/fc/ee5bb50eff313149657f173b003649677e27fa3aaae1ecc806add37f017c/torch-2.3.1-cp310-cp310-win_amd64.whl (159.8 MB)
+     -                                      8.3/159.8 MB 240.3 kB/s eta 0:10:31
