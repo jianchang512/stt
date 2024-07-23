@@ -1,4 +1,18 @@
-[简体中文](./README.md) / [捐助本项目](https://github.com/jianchang512/pyvideotrans/blob/main/about.md) / [Discord](https://discord.gg/SyT6GEwkJS) 
+<div align="center">
+
+[中文简体](../../README.md) | **English** | [Português (Brasil)](../pt/README_pt-BR.md)
+
+</div>
+
+---
+
+<div align="center">
+
+[👑 Support the project](https://github.com/jianchang512/pyvideotrans/blob/main/docs/about.md) | [Discord](https://discord.gg/SyT6GEwkJS)
+
+</div>
+
+---
 
 # Voice Recognition to Text Tool
 

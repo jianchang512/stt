@@ -1,4 +1,19 @@
-[English](./README_EN.md) / [捐助本项目](https://github.com/jianchang512/pyvideotrans/blob/main/about.md) / [Discord邀请](https://discord.gg/SyT6GEwkJS) 
+<div align="center">
+
+**中文简体** | [English](./docs/en/README_EN.md) | [Português (Brasil)](./docs/pt/README_pt-BR.md)
+
+</div>
+
+---
+
+<div align="center">
+
+[👑 捐助本项目](https://github.com/jianchang512/pyvideotrans/blob/main/docs/about.md) | [Discord邀请](https://discord.gg/SyT6GEwkJS)
+
+</div>
+
+---
+
 
 # 语音识别转文字工具
 
