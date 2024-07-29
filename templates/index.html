@@ -189,10 +189,19 @@
                 <option selected value="base">base</option>
                 <option value="base.en">base.en</option>
                 <option value="small.en">small.en</option>
+                <option value="medium">medium</option>
                 <option value="medium.en">medium.en</option>
                 <option value="large-v1">large-v1</option>
                 <option value="large-v2">large-v2</option>
                 <option value="large-v3">large-v3</option>
+				
+                <option value="distil-small.en">distil-small.en</option>
+                <option value="distil-medium.en">distil-medium.en</option>
+                <option value="distil-large-v3">distil-large-v3</option>
+                <option value="distil-large-v3">distil-large-v3</option>
+				
+				
+				
               </select>
             </div>
           </div>
@@ -449,7 +458,7 @@
           },
           done: function (res) {
             pending_files.push(res);
-            /* $('#wav_name').val(res.data); */
+            //$('#wav_name').val(res.data);
             console.log(res);
           },
           allDone: function () {
