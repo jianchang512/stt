@@ -6,13 +6,20 @@ import re
 ROOT_DIR = os.getcwd()
 
 def parse_ini(file=os.path.join(ROOT_DIR,'set.ini')):
+    
+    lang="zh"
+    try:
+        lang="en" if locale.getdefaultlocale()[0].split('_')[0].lower() != 'zh' else "zh"
+    except:
+        lang="zh"
+    
     sets={
         "web_address":"127.0.0.1:9977", 
-        "lang":"en" if locale.getdefaultlocale()[0].split('_')[0].lower() != 'zh' else "zh", 
+        "lang":lang, 
         "devtype":"cpu", 
-        "cuda_com_type":"int8",
-        "beam_size":1,
-        "best_of":1,
+        "cuda_com_type":"float32",
+        "beam_size":5,
+        "best_of":5,
         "vad":True,
         "temperature":0,
         "condition_on_previous_text":False,
@@ -34,12 +41,14 @@ def parse_ini(file=os.path.join(ROOT_DIR,'set.ini')):
                 sets[line[0]] = True
             elif re.match(r'^\d+$', line[1]):
                 sets[line[0]]=int(line[1])
+            elif line[1].find(',')>0:
+                sets[line[0]]=line[1].split(',')
             elif line[1]:
                 sets[line[0]]=str(line[1]).lower()
     return sets
 
 sets=parse_ini()
-print(sets)
+
 web_address=sets.get('web_address')
 LANG=sets.get('lang')
 devtype=sets.get('devtype')

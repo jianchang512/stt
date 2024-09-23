@@ -3,6 +3,7 @@ venv
 build
 dist
 models/models--Systran--faster-whisper-base
+models/models--Systran--faster-whisper-tiny
 *.log
 *.wav
 *.mp3

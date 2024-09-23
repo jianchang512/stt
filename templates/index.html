@@ -172,6 +172,7 @@
                 {% for name,val in lang_code.items() %}
                 <option value="{{ val[0] }}">{{ name }}</option>
                 {% endfor %}
+                <option value="auto" data-cn="自动检测" data-en="Auto detection"></option>
               </select>
             </div>
           </div>
@@ -184,23 +185,9 @@
             ></label>
             <div class="">
               <select name="model">
-                <option value="tiny">tiny</option>
-                <option value="tiny.en">tiny.en</option>
-                <option selected value="base">base</option>
-                <option value="base.en">base.en</option>
-                <option value="small.en">small.en</option>
-                <option value="medium">medium</option>
-                <option value="medium.en">medium.en</option>
-                <option value="large-v1">large-v1</option>
-                <option value="large-v2">large-v2</option>
-                <option value="large-v3">large-v3</option>
-				
-                <option value="distil-small.en">distil-small.en</option>
-                <option value="distil-medium.en">distil-medium.en</option>
-                <option value="distil-large-v3">distil-large-v3</option>
-                <option value="distil-large-v3">distil-large-v3</option>
-				
-				
+                {% for name in model_list %}
+                <option value="{{name}}">{{name}}</option>
+				{% endfor %}			
 				
               </select>
             </div>
@@ -251,11 +238,20 @@
             ></label>
             <div class="">
               <select id="isIndependent" name="isIndependent">
-                <option value="off" data-cn="否" data-en="OFF"></option>
                 <option value="on" data-cn="是" data-en="ON"></option>
+                <option value="off" data-cn="否" data-en="OFF"></option>
               </select>
             </div>
           </div>
+		<div class="layui-form-item">
+			<label
+			  class="layui-form-label"
+			  
+			  data-cn="代理"
+			  data-en="Proxy"
+			></label><input name="proxy" id="proxy" class="layui-input" placeholder-cn="网络代理地址" placeholder-en="proxy address">
+				
+		</div>
 	</div>
           <div
             class="layui-label-text layui-font-12 my-1 "
@@ -305,6 +301,10 @@
         </div>
       </div>
     </div>
+	
+	<div style="text-align:center">
+		<a data-cn="点击查看如何添加huggingface.co上的模型" data-en="Click to see how to add models on huggingface.co" style="text-align:center;font-size:12px;color:#777" href="https://pyvideotrans.com/stthuggingface" target="_blank"></a>
+	</div>
 
     <script src="/static/layui/layui.js"></script>
     <script>
@@ -349,6 +349,7 @@
                 file_name,
               });
               set_status(file_name, res.msg, "#ff5722");
+			  return
             }
             const percentage = `${(res["data"] * 100).toFixed(2)}%`;
             set_status(file_name, percentage, "#16b777");
@@ -392,7 +393,7 @@
 				url:"/process", 
 				method:"POST",
 				data:field, 
-				timeout:3600000,
+				timeout:86400000,
 				success:function (res) {
 					if (res.code !== 0) {
 					  resolve({
@@ -443,7 +444,7 @@
           elem: "#upload",
           field: "audio",
           accept: "file",
-          exts: "mp4|mp3|flac|wav|avi|mkv|mpeg|mov",
+          exts: "mp4|mp3|flac|wav|aac|m4a|avi|mkv|mpeg|mov",
           multiple: true,
           url: "/upload", // 实际使用时改成您自己的上传接口即可。
           choose: function () {
@@ -535,7 +536,7 @@
             var aEl = document.createElement('a')
             aEl.href = url
             aEl.target = '_blank'
-            aEl.download = '音频文本.txt'
+            aEl.download = '全部音频文本.txt'
             aEl.click()
             aEl.remove()
             URL.revokeObjectURL(url)
@@ -562,12 +563,19 @@
 		  if(field['model'].endsWith('.en') && field['language']!='en'){
 			layer.alert(
               language === "zh"
-                ? "en结尾的模型只可用于英语文字识别!"
-                : "Models ending in en can only be used for English text recognition!",
+                ? "en结尾的模型只可用于确定的英语语音识别!"
+                : "Models ending in en can only be used for English speech recognition!",
               { title: false }
             );
             return false;
 		  }
+		  
+		  if(field['proxy'].trim()){
+			localStorage.setItem("proxy",field['proxy'].trim())
+		  }else{
+			localStorage.removeItem("proxy")
+		  }
+		  
           // 开始识别
           process_loading().start();
           // 按钮禁用
@@ -640,7 +648,10 @@
         }, 60000);
       });
 
-
+	
+	if(localStorage.getItem("proxy")){
+		$("#proxy").val(localStorage.getItem("proxy"));
+	}
     </script>
   </body>
 </html>

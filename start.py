@@ -52,11 +52,13 @@ def static_files(filename):
 def index():
     sets=cfg.parse_ini()
     return render_template("index.html",
-                           devtype=sets.get('devtype'),
-                           lang_code=cfg.lang_code,
-                           language=cfg.LANG,
-                           version=stslib.version_str,
-                           root_dir=ROOT_DIR.replace('\\', '/'))
+       devtype=sets.get('devtype'),
+       lang_code=cfg.lang_code,
+       language=cfg.LANG,
+       version=stslib.version_str,
+       root_dir=ROOT_DIR.replace('\\', '/'),
+       model_list=cfg.sets.get('model_list')
+    )
 
 
 # 上传音频
@@ -73,17 +75,20 @@ def upload():
         if os.path.exists(wav_file) and os.path.getsize(wav_file) > 0:
             return jsonify({'code': 0, 'msg': cfg.transobj['lang1'], "data": os.path.basename(wav_file)})
         msg = ""
-        if ext in ['.mp4', '.mov', '.avi', '.mkv', '.mpeg', '.mp3', '.flac']:
+        if ext in ['.mp4', '.mov', '.avi', '.mkv', '.mpeg', '.mp3', '.flac','.aac','.m4a']:
             video_file = os.path.join(cfg.TMP_DIR, f'{noextname}{ext}')
             audio_file.save(video_file)
             params = [
                 "-i",
                 video_file,
             ]
-            if ext not in ['.mp3', '.flac']:
+            if ext not in ['.mp3', '.flac','.aac','.m4a']:
                 params.append('-vn')
             params.append(wav_file)
-            rs = tool.runffmpeg(params)
+            try:
+                rs = tool.runffmpeg(params)
+            except Exception as e:
+                return jsonify({"code": 1, "msg": str(e)})
             if rs != 'ok':
                 return jsonify({"code": 1, "msg": rs})
             msg = "," + cfg.transobj['lang9']
@@ -98,14 +103,40 @@ def upload():
         app.logger.error(f'[upload]error: {e}')
         return jsonify({'code': 2, 'msg': cfg.transobj['lang2']})
 
-
+# 后端线程处理
 def shibie(*, wav_name=None, model=None, language=None, data_type=None, wav_file=None, key=None):
     try:
         sets=cfg.parse_ini()
-        print(f'{sets.get("initial_prompt_zh")}')
-        modelobj = WhisperModel(model, device=sets.get('devtype'), compute_type=sets.get('cuda_com_type'), download_root=cfg.ROOT_DIR + "/models", local_files_only=True)
         cfg.progressbar[key]=0
-        segments,info = modelobj.transcribe(wav_file,  beam_size=sets.get('beam_size'),best_of=sets.get('best_of'),temperature=0 if sets.get('temperature')==0 else [0.0,0.2,0.4,0.6,0.8,1.0],condition_on_previous_text=sets.get('condition_on_previous_text'),vad_filter=sets.get('vad'),  vad_parameters=dict(min_silence_duration_ms=300),language=language, initial_prompt=None if language!='zh' else sets.get('initial_prompt_zh'))
+        print(f'{model=}')
+        
+        try:
+            modelobj = WhisperModel(
+                model, 
+                device=sets.get('devtype'), 
+                compute_type=sets.get('cuda_com_type'), 
+                download_root=cfg.ROOT_DIR + "/models", 
+                local_files_only= False if model.find('/')>0 else True
+            )
+        except Exception as e:
+            err=f'从huggingface.co下载模型 {model} 失败，请检查网络连接' if model.find('/')>0 else ''
+            cfg.progressresult[key]='error:'+err+str(e)
+            return
+            
+            
+        segments,info = modelobj.transcribe(
+            wav_file,  
+            beam_size=sets.get('beam_size'),
+            best_of=sets.get('best_of'),
+            temperature=0 if sets.get('temperature')==0 else [0.0,0.2,0.4,0.6,0.8,1.0],
+            condition_on_previous_text=sets.get('condition_on_previous_text'),
+            vad_filter=sets.get('vad'),  
+            vad_parameters=dict(
+                min_silence_duration_ms=300
+            ),
+            language=language if language !='auto' else None, 
+            initial_prompt=sets.get('initial_prompt_zh') if language == 'zh' else None
+        )
         total_duration = round(info.duration, 2)  # Same precision as the Whisper timestamps.
 
         raw_subtitles = []
@@ -135,7 +166,7 @@ def shibie(*, wav_name=None, model=None, language=None, data_type=None, wav_file
             raw_subtitles = "\n".join(raw_subtitles)
         cfg.progressresult[key]=raw_subtitles
     except Exception as e:
-        cfg.progressresult[key]=str(e)
+        cfg.progressresult[key]='error:'+str(e)
         print(str(e))
 
 # 根据文本返回tts结果，返回 name=文件名字，filename=文件绝对路径
@@ -147,7 +178,15 @@ def shibie(*, wav_name=None, model=None, language=None, data_type=None, wav_file
 def process():
     # 原始字符串
     wav_name = request.form.get("wav_name").strip()
+    proxy = request.form.get("proxy").strip()
+    print(proxy)
+    if proxy and (proxy.startswith('http') or proxy.startswith('sock')):
+        os.environ['http_proxy'] = proxy
+        os.environ['https_proxy'] = proxy  # 如果需要设置 https 代理
+
     model = request.form.get("model")
+    if _is_model_exists(model) is not True:
+        return jsonify({"code": 1, "msg": f"{model} {cfg.transobj['lang4']}"})
     # 语言
     language = request.form.get("language")
     # 返回格式 json txt srt
@@ -155,8 +194,7 @@ def process():
     wav_file = os.path.join(cfg.TMP_DIR, wav_name)
     if not os.path.exists(wav_file):
         return jsonify({"code": 1, "msg": f"{wav_file} {cfg.langlist['lang5']}"})
-    if not os.path.exists(os.path.join(cfg.MODEL_DIR, f'models--Systran--faster-whisper-{model}/snapshots/')):
-        return jsonify({"code": 1, "msg": f"{model} {cfg.transobj['lang4']}"})
+
     key=f'{wav_name}{model}{language}{data_type}'
     #重设结果为none
     cfg.progressresult[key]=None
@@ -178,11 +216,24 @@ def progressbar():
     # 返回格式 json txt srt
     data_type = request.form.get("data_type")
     key = f'{wav_name}{model}{language}{data_type}'
+    if key in cfg.progressresult and cfg.progressresult[key] is not None and cfg.progressresult[key].startswith('error:'):
+        return jsonify({"code":1,"msg":cfg.progressresult[key][6:]})
+        
     progressbar = cfg.progressbar[key]
     if progressbar>=1:
         return jsonify({"code":0, "data":progressbar, "msg":"ok", "result":cfg.progressresult[key]})
     return jsonify({"code":0, "data":progressbar, "msg":"ok"})
 
+
+def _is_model_exists(model):
+    if model.find('/')>0:
+        return True
+    if  not model.startswith('distil') and not os.path.exists(os.path.join(cfg.MODEL_DIR, f'models--Systran--faster-whisper-{model}/snapshots/')):
+        return False
+    if model.startswith('distil') and not os.path.exists(os.path.join(cfg.MODEL_DIR, f'models--Systran--faster-{model}/snapshots/')):
+        return False
+    
+    return True
 
 @app.route('/api',methods=['GET','POST'])
 def api():
@@ -191,9 +242,9 @@ def api():
         audio_file = request.files['file']
         model = request.form.get("model")
         language = request.form.get("language")
-        response_format = request.form.get("response_format")
-        print(f'{model=},{language=},{response_format=}')
-        if not os.path.exists(os.path.join(cfg.MODEL_DIR, f'models--Systran--faster-whisper-{model}/snapshots/')):
+        response_format = request.form.get("response_format",'srt')
+        
+        if _is_model_exists(model) is not True:
             return jsonify({"code": 1, "msg": f"{model} {cfg.transobj['lang4']}"})
 
         # 如果是mp4
@@ -201,7 +252,6 @@ def api():
         ext = ext.lower()
         # 如果是视频，先分离
         wav_file = os.path.join(cfg.TMP_DIR, f'{noextname}.wav')
-        print(f'{wav_file=}')
         if not os.path.exists(wav_file) or os.path.getsize(wav_file) == 0:
             msg = ""
             if ext in ['.mp4', '.mov', '.avi', '.mkv', '.mpeg', '.mp3', '.flac']:
@@ -222,12 +272,35 @@ def api():
                 audio_file.save(wav_file)
             else:
                 return jsonify({"code": 1, "msg": f"{cfg.transobj['lang3']} {ext}"})
-        print(f'{ext=}')
         sets=cfg.parse_ini()
-        model = WhisperModel(model, device=sets.get('devtype'), compute_type=sets.get('cuda_com_type'), download_root=cfg.ROOT_DIR + "/models", local_files_only=True)
-
-        segments,_ = model.transcribe(wav_file, beam_size=sets.get('beam_size'),best_of=sets.get('best_of'),temperature=0 if sets.get('temperature')==0 else [0.0,0.2,0.4,0.6,0.8,1.0],condition_on_previous_text=sets.get('condition_on_previous_text'),vad_filter=sets.get('vad'),
-    vad_parameters=dict(min_silence_duration_ms=300,max_speech_duration_s=10.5),language=language,initial_prompt=None if language!='zh' else sets.get('initial_prompt_zh'))
+        
+        
+        try:
+            model = WhisperModel(
+                model, 
+                device=sets.get('devtype'), 
+                compute_type=sets.get('cuda_com_type'), 
+                download_root=cfg.ROOT_DIR + "/models", 
+                local_files_only=False if model.find('/')>0 else True
+            )
+        except Exception as e:
+            err=f'从huggingface.co下载模型 {model} 失败，请检查网络连接' if model.find('/')>0 else ''
+            return jsonify({"code": 1, "msg": f"{err} {e}"})
+            
+        segments,info = model.transcribe(
+            wav_file, 
+            beam_size=sets.get('beam_size'),
+            best_of=sets.get('best_of'),
+            temperature=0 if sets.get('temperature')==0 else [0.0,0.2,0.4,0.6,0.8,1.0],
+            condition_on_previous_text=sets.get('condition_on_previous_text'),
+            vad_filter=sets.get('vad'),    
+            vad_parameters=dict(
+                min_silence_duration_ms=300,
+                max_speech_duration_s=10.5
+            ),
+            language=language if language !='auto' else None,
+            initial_prompt=sets.get('initial_prompt_zh') if language == 'zh' else None
+        )
         raw_subtitles = []
         for  segment in segments:
             start = int(segment.start * 1000)

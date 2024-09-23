@@ -41,10 +41,8 @@ def runffmpeg(arg):
 def checkupdate():
     try:
         res=requests.get("https://raw.githubusercontent.com/jianchang512/sts/main/version.json")
-        print(f"{res.status_code=}")
         if res.status_code==200:
             d=res.json()
-            print(f"{d=}")
             if d['version_num']>stslib.VERSION:
                 cfg.updatetips=f'New version {d["version"]}'
     except Exception as e:
