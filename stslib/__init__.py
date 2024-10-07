@@ -1,2 +1,2 @@
-VERSION=94
-version_str="v0.0.94"
+VERSION=95
+version_str="v0.0.95"
