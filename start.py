@@ -226,6 +226,8 @@ def progressbar():
 
 
 def _is_model_exists(model):
+    if model.startswith('distil'):
+        model = 'distil-whisper' + model[6:]
     if model.find('/')>0:
         return True
     if  not model.startswith('distil') and not os.path.exists(os.path.join(cfg.MODEL_DIR, f'models--Systran--faster-whisper-{model}/snapshots/')):
@@ -242,11 +244,11 @@ def api():
         audio_file = request.files['file']
         model = request.form.get("model")
         language = request.form.get("language")
+        #if language == 'zh' and model.startswith('distil'):
+        #    language = 'Chinese'
         response_format = request.form.get("response_format",'srt')
-        
-        if _is_model_exists(model) is not True:
-            return jsonify({"code": 1, "msg": f"{model} {cfg.transobj['lang4']}"})
-
+        #if _is_model_exists(model) is not True:
+        #    return jsonify({"code": 1, "msg": f"{model} {cfg.transobj['lang4']}"})
         # 如果是mp4
         noextname, ext = os.path.splitext(audio_file.filename)
         ext = ext.lower()
@@ -281,12 +283,11 @@ def api():
                 device=sets.get('devtype'), 
                 compute_type=sets.get('cuda_com_type'), 
                 download_root=cfg.ROOT_DIR + "/models", 
-                local_files_only=False if model.find('/')>0 else True
+                local_files_only=False
             )
         except Exception as e:
             err=f'从huggingface.co下载模型 {model} 失败，请检查网络连接' if model.find('/')>0 else ''
             return jsonify({"code": 1, "msg": f"{err} {e}"})
-            
         segments,info = model.transcribe(
             wav_file, 
             beam_size=sets.get('beam_size'),
@@ -302,7 +303,8 @@ def api():
             initial_prompt=sets.get('initial_prompt_zh') if language == 'zh' else None
         )
         raw_subtitles = []
-        for  segment in segments:
+        #print(segments)
+        for segment in segments:
             start = int(segment.start * 1000)
             end = int(segment.end * 1000)
             startTime = tool.ms_to_time_string(ms=start)

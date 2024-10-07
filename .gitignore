@@ -11,3 +11,8 @@ models/models--Systran--faster-whisper-tiny
 *.exe
 *.zip
 stslib/__pycache__
+models/*
+*.lock
+*.7z
+*.m4a
+export.txt

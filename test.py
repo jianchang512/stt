@@ -6,8 +6,8 @@ import requests
 url = "http://127.0.0.1:9977/api"
 # 请求参数  file:音视频文件，language：语言代码，model：模型，response_format:text|json|srt
 # 返回 code==0 成功，其他失败，msg==成功为ok，其他失败原因，data=识别后返回文字
-files = {"file": open("C:\\Users\\c1\\Videos\\2.wav", "rb")}
-data={"language":"zh","model":"base","response_format":"json"}
+files = {"file": open("/home/felix/Downloads/testaudio.m4a", "rb")}
+data={"language":"zh","model":"distil-large-v3","response_format":"text"}
 response = requests.request("POST", url, timeout=600, data=data,files=files)
 print(response.json())
 '''
