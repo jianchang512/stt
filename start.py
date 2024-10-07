@@ -210,12 +210,12 @@ def process():
 def progressbar():
     # 原始字符串
     wav_name = request.form.get("wav_name").strip()
-    model = request.form.get("model")
+    model_name = request.form.get("model")
     # 语言
     language = request.form.get("language")
     # 返回格式 json txt srt
     data_type = request.form.get("data_type")
-    key = f'{wav_name}{model}{language}{data_type}'
+    key = f'{wav_name}{model_name}{language}{data_type}'
     if key in cfg.progressresult and cfg.progressresult[key] is not None and cfg.progressresult[key].startswith('error:'):
         return jsonify({"code":1,"msg":cfg.progressresult[key][6:]})
         
@@ -242,7 +242,7 @@ def api():
     try:
         # 获取上传的文件
         audio_file = request.files['file']
-        model = request.form.get("model")
+        model_name = request.form.get("model")
         language = request.form.get("language")
         #if language == 'zh' and model.startswith('distil'):
         #    language = 'Chinese'
@@ -278,15 +278,17 @@ def api():
         
         
         try:
+            if model_name.startswith('distil-'):
+                model_name = model_name.replace('-whisper', '')
             model = WhisperModel(
-                model, 
+                model_name, 
                 device=sets.get('devtype'), 
                 compute_type=sets.get('cuda_com_type'), 
                 download_root=cfg.ROOT_DIR + "/models", 
                 local_files_only=False
             )
         except Exception as e:
-            err=f'从huggingface.co下载模型 {model} 失败，请检查网络连接' if model.find('/')>0 else ''
+            err=f'从huggingface.co下载模型 {model_name} 失败，请检查网络连接' if model_name.find('/')>0 else ''
             return jsonify({"code": 1, "msg": f"{err} {e}"})
         segments,info = model.transcribe(
             wav_file, 
