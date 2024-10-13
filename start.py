@@ -13,6 +13,7 @@ import stslib
 from stslib import cfg, tool
 from stslib.cfg import ROOT_DIR
 from faster_whisper import WhisperModel
+import time
 
 
 class CustomRequestHandler(WSGIHandler):
@@ -112,7 +113,7 @@ def shibie(*, wav_name=None, model=None, language=None, data_type=None, wav_file
         
         try:
             modelobj = WhisperModel(
-                model, 
+                model  if not model.startswith('distil') else  model.replace('-whisper', ''), 
                 device=sets.get('devtype'), 
                 compute_type=sets.get('cuda_com_type'), 
                 download_root=cfg.ROOT_DIR + "/models", 
@@ -251,27 +252,27 @@ def api():
         noextname, ext = os.path.splitext(audio_file.filename)
         ext = ext.lower()
         # 如果是视频，先分离
-        wav_file = os.path.join(cfg.TMP_DIR, f'{noextname}.wav')
-        if not os.path.exists(wav_file) or os.path.getsize(wav_file) == 0:
-            msg = ""
-            if ext in ['.mp4', '.mov', '.avi', '.mkv', '.mpeg', '.mp3', '.flac']:
-                video_file = os.path.join(cfg.TMP_DIR, f'{noextname}{ext}')
-                audio_file.save(video_file)
-                params = [
-                    "-i",
-                    video_file,
-                ]
-                if ext not in ['.mp3', '.flac']:
-                    params.append('-vn')
-                params.append(wav_file)
-                rs = tool.runffmpeg(params)
-                if rs != 'ok':
-                    return jsonify({"code": 1, "msg": rs})
-                msg = "," + cfg.transobj['lang9']
-            elif ext == '.wav':
-                audio_file.save(wav_file)
-            else:
-                return jsonify({"code": 1, "msg": f"{cfg.transobj['lang3']} {ext}"})
+        wav_file = os.path.join(cfg.TMP_DIR, f'{noextname}-{time.time()}.wav')
+        #if not os.path.exists(wav_file) or os.path.getsize(wav_file) == 0:
+        msg = ""
+        if ext in ['.mp4', '.mov', '.avi', '.mkv', '.mpeg', '.mp3', '.flac','.aac','.m4a']:
+            video_file = os.path.join(cfg.TMP_DIR, f'{noextname}{ext}')
+            audio_file.save(video_file)
+            params = [
+                "-i",
+                video_file,
+            ]
+            if ext not in ['.mp3', '.flac']:
+                params.append('-vn')
+            params.append(wav_file)
+            rs = tool.runffmpeg(params)
+            if rs != 'ok':
+                return jsonify({"code": 1, "msg": rs})
+            msg = "," + cfg.transobj['lang9']
+        elif ext == '.wav':
+            audio_file.save(wav_file)
+        else:
+            return jsonify({"code": 1, "msg": f"{cfg.transobj['lang3']} {ext}"})
         sets=cfg.parse_ini()
         
         
@@ -288,7 +289,6 @@ def api():
         except Exception as e:
             err=f'从huggingface.co下载模型 {model_name} 失败，请检查网络连接' if model_name.find('/')>0 else ''
             return jsonify({"code": 1, "msg": f"{err} {e}"})
-            
         segments,info = model.transcribe(
             wav_file, 
             beam_size=sets.get('beam_size'),
