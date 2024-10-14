@@ -217,7 +217,7 @@ def progressbar():
     # 返回格式 json txt srt
     data_type = request.form.get("data_type")
     key = f'{wav_name}{model_name}{language}{data_type}'
-    if key in cfg.progressresult and cfg.progressresult[key] is not None and cfg.progressresult[key].startswith('error:'):
+    if key in cfg.progressresult and  isinstance(cfg.progressresult[key],str) and cfg.progressresult[key].startswith('error:'):
         return jsonify({"code":1,"msg":cfg.progressresult[key][6:]})
         
     progressbar = cfg.progressbar[key]
