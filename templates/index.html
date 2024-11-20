@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title data-cn="语音识别转文字" data-en="Speech Recognition"></title>
+    <title data-cn="语音识别转文字" data-en="Speech Recognition to Text"></title>
     <meta name="renderer" content="webkit" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -107,7 +107,7 @@
         <div
           class="layui-logo layui-hide-xs"
           style="color: #fff"
-          data-en="Speech Recognition {{ version }}"
+          data-en="STT {{ version }}"
           data-cn="语音识别 {{ version }}"
         ></div>
         <!-- 头部区域（可配合layui 已有的水平导航） -->
@@ -172,7 +172,6 @@
                 {% for name,val in lang_code.items() %}
                 <option value="{{ val[0] }}">{{ name }}</option>
                 {% endfor %}
-                <option value="auto" data-cn="自动检测" data-en="Auto detection"></option>
               </select>
             </div>
           </div>

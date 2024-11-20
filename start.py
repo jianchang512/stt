@@ -129,12 +129,12 @@ def shibie(*, wav_name=None, model=None, language=None, data_type=None, wav_file
             wav_file,  
             beam_size=sets.get('beam_size'),
             best_of=sets.get('best_of'),
-            temperature=0 if sets.get('temperature')==0 else [0.0,0.2,0.4,0.6,0.8,1.0],
+            #temperature=0 if sets.get('temperature')==0 else [0.0,0.2,0.4,0.6,0.8,1.0],
             condition_on_previous_text=sets.get('condition_on_previous_text'),
             vad_filter=sets.get('vad'),  
-            vad_parameters=dict(
-                min_silence_duration_ms=300
-            ),
+            #vad_parameters=dict(
+            #    min_silence_duration_ms=300
+            #),
             language=language if language !='auto' else None, 
             initial_prompt=sets.get('initial_prompt_zh') if language == 'zh' else None
         )

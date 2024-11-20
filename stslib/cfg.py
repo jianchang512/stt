@@ -12,7 +12,6 @@ def parse_ini(file=os.path.join(ROOT_DIR,'set.ini')):
         lang="en" if locale.getdefaultlocale()[0].split('_')[0].lower() != 'zh' else "zh"
     except:
         lang="zh"
-    
     sets={
         "web_address":"127.0.0.1:9977", 
         "lang":lang, 
@@ -92,6 +91,7 @@ language_code_list={
         "阿拉伯语": ['ar'],
         "土耳其语": ['tr'],
         "匈牙利": ['hu'],
+        "自动检测":['auto']
     },
     "en":{
         "Chinese": ['zh'],
@@ -109,6 +109,7 @@ language_code_list={
         "Arabic": ['ar'],
         "Turkish": ['tr'],
         "Hungarian": ['hu'],
+        "Automatic Detection":['auto']
     }
 }
 
