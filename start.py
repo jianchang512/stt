@@ -248,35 +248,37 @@ def api():
         if _is_model_exists(model_name) is not True:
             return jsonify({"code": 1, "msg": f"{model_name} {cfg.transobj['lang4']}"})
 
-        # 如果是mp4
-        noextname, ext = os.path.splitext(audio_file.filename)
-        ext = ext.lower()
-        # 如果是视频，先分离
-        wav_file = os.path.join(cfg.TMP_DIR, f'{noextname}-{time.time()}.wav')
-        #if not os.path.exists(wav_file) or os.path.getsize(wav_file) == 0:
-        msg = ""
-        if ext in ['.mp4', '.mov', '.avi', '.mkv', '.mpeg', '.mp3', '.flac','.aac','.m4a']:
-            video_file = os.path.join(cfg.TMP_DIR, f'{noextname}{ext}')
-            audio_file.save(video_file)
-            params = [
-                "-i",
-                video_file,
-            ]
-            if ext not in ['.mp3', '.flac']:
-                params.append('-vn')
-            params.append(wav_file)
+
+        basename = os.path.basename(audio_file.filename)
+        print(f'{basename=}')
+        video_file = os.path.join(cfg.TMP_DIR, basename)        
+        audio_file.save(video_file)
+        
+        wav_file = os.path.join(cfg.TMP_DIR, f'{basename}-{time.time()}.wav')
+        params = [
+            "-i",
+            video_file,
+            "-ar",
+            "16000",
+            "-ac",
+            "1",
+            wav_file
+        ]
+        
+        try:
+            print(params)
             rs = tool.runffmpeg(params)
             if rs != 'ok':
                 return jsonify({"code": 1, "msg": rs})
-            msg = "," + cfg.transobj['lang9']
-        elif ext == '.wav':
-            audio_file.save(wav_file)
-        else:
-            return jsonify({"code": 1, "msg": f"{cfg.transobj['lang3']} {ext}"})
-        sets=cfg.parse_ini()
+        except Exception as e:
+            print(e)
+            return jsonify({"code": 1, "msg": str(e)})
+        
+
         
         
         try:
+            sets=cfg.parse_ini()
             if model_name.startswith('distil-'):
                 model_name = model_name.replace('-whisper', '')
             model = WhisperModel(
