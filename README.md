@@ -1,6 +1,6 @@
 <div align="center">
 
-**中文简体** | [English](./docs/en/README_EN.md) | [Português (Brasil)](./docs/pt/README_pt-BR.md)
+**中文简体** | [English](./docs/en/README_EN.md)
 
 </div>
 
@@ -8,7 +8,7 @@
 
 <div align="center">
 
-[👑 捐助本项目](https://github.com/jianchang512/pyvideotrans/blob/main/docs/about.md) | [Discord邀请](https://discord.gg/SyT6GEwkJS)
+[👑 捐助本项目](https://pyvideotrans.com/about)
 
 </div>
 
@@ -129,6 +129,25 @@ Api 请求示例
     print(response.json())
 ```
 
+# 兼容 openai 语音转文字接口
+
+示例代码
+```
+# openai兼容格式
+from openai import OpenAI
+
+client = OpenAI(api_key='123',base_url='http://127.0.0.1:9977/v1')
+audio_file= open("/users/c1/videos/60.wav", "rb")
+
+transcription = client.audio.transcriptions.create(
+    model="tiny", 
+    file=audio_file,
+    response_format="text" # 支持 text 、srt 格式，json格式会返回srt字幕解析后的json数据
+)
+
+print(transcription.text)
+
+```
 
 
 # CUDA 加速支持
