@@ -49,7 +49,9 @@ def parse_ini(file=os.path.join(ROOT_DIR,'set.ini')):
 sets=parse_ini()
 
 web_address=sets.get('web_address')
-LANG=sets.get('lang')
+LANG=sets.get('lang','zh')
+if LANG=='zh':
+    os.environ['HF_ENDPOINT'] = 'https://hf-mirror.com'
 devtype=sets.get('devtype')
 cuda_com_type=sets.get('cuda_com_type')
 
@@ -141,4 +143,6 @@ updatetips = ""
 transobj = langlist[LANG]
 lang_code=language_code_list[LANG]
 
+TASK_QUEUE= []
 
+MODEL_DICT={}

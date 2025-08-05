@@ -84,6 +84,8 @@
       }
       .text-res-file {
         margin-bottom: 6px;
+		font-size:18px;
+		color:#000
       }
       .status {
         margin-left: 20px;
@@ -98,6 +100,9 @@
 	  .layui-form-label{
 		width:auto;
 		padding:5px;
+	  }
+	  .layui-btn-disabled{
+		background:#666 !important
 	  }
     </style>
   </head>
@@ -242,15 +247,6 @@
               </select>
             </div>
           </div>
-		<div class="layui-form-item">
-			<label
-			  class="layui-form-label"
-			  
-			  data-cn="代理"
-			  data-en="Proxy"
-			></label><input name="proxy" id="proxy" class="layui-input" placeholder-cn="网络代理地址" placeholder-en="proxy address">
-				
-		</div>
 	</div>
           <div
             class="layui-label-text layui-font-12 my-1 "
@@ -392,7 +388,7 @@
 				url:"/process", 
 				method:"POST",
 				data:field, 
-				timeout:86400000,
+				timeout:8640000000,
 				success:function (res) {
 					if (res.code !== 0) {
 					  resolve({
@@ -482,7 +478,7 @@
         // 导出
         function exportText(title, text) {
             var file_type = $("#data_type").val();
-            var file_name = title.replace('wav', file_type)
+            var file_name = title.replace('wav', file_type.replace('text','txt'))
             var blob = new Blob([text], {
               type: "text/plain",
             });
@@ -569,11 +565,7 @@
             return false;
 		  }
 		  
-		  if(field['proxy'].trim()){
-			localStorage.setItem("proxy",field['proxy'].trim())
-		  }else{
-			localStorage.removeItem("proxy")
-		  }
+		  
 		  
           // 开始识别
           process_loading().start();
@@ -648,9 +640,7 @@
       });
 
 	
-	if(localStorage.getItem("proxy")){
-		$("#proxy").val(localStorage.getItem("proxy"));
-	}
+	
     </script>
   </body>
 </html>
