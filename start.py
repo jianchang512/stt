@@ -140,7 +140,6 @@ def shibie():
                 modelobj= WhisperModel(
                     model  if not model.startswith('distil') else  model.replace('-whisper', ''), 
                     device=sets.get('devtype'), 
-                    compute_type=sets.get('cuda_com_type'), 
                     download_root=cfg.ROOT_DIR + "/models"
                 )
                 cfg.MODEL_DICT[model]=modelobj
@@ -361,7 +360,6 @@ def _api_process(model_name,wav_file,language=None,response_format="text",prompt
         model = WhisperModel(
             model_name, 
             device=sets.get('devtype'), 
-            compute_type=sets.get('cuda_com_type'), 
             download_root=cfg.ROOT_DIR + "/models"
         )
     except Exception as e:
