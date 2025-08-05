@@ -197,7 +197,9 @@ def shibie():
 @app.route('/process', methods=['GET', 'POST'])
 def process():
     # 原始字符串
-    wav_name = request.form.get("wav_name").strip()
+    wav_name = request.form.get("wav_name","").strip()
+    if not wav_name:
+        return jsonify({"code": 1, "msg": f"No file had uploaded"})
     model = request.form.get("model")
     # 语言
     language = request.form.get("language")
